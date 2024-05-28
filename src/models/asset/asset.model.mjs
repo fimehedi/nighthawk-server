@@ -14,9 +14,9 @@ const assetSchema = new Schema({
   images: {
     type: Array,
   },
-  category: {
+  sub_category: {
     type: Schema.Types.ObjectId,
-    ref: "Category",
+    ref: "SubCategory",
   }
 });
 

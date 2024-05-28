@@ -2,6 +2,7 @@ import { Router } from 'express';
 import adminRouter from './admin.route.mjs';
 import assetRouter from './asset.route.mjs';
 import categoryRouter from './category.route.mjs';
+import pageRouter from './page.route.mjs';
 import sliderRouter from './slider.route.mjs';
 
 const indexRouter = Router();
@@ -18,5 +19,6 @@ indexRouter.use('/admins', adminRouter);
 indexRouter.use('/sliders', sliderRouter);
 indexRouter.use('/categories', categoryRouter);
 indexRouter.use('/assets', assetRouter);
+indexRouter.use('/pages', pageRouter);
 
 export default indexRouter;
