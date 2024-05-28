@@ -1,55 +1,85 @@
-import { Admin } from "../../models/admin/admin.model.mjs";
-import { Role } from "../../models/role/role.model.mjs";
-
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { config } from '../../config/config.mjs';
+import { Admin } from '../../models/admin/admin.model.mjs';
+import { Role } from '../../models/role/role.model.mjs';
 class AdminService {
+	async createAdmin(payload) {
+		// find the role with the name 'admin' if not found create it
+		let role = await Role.findOne({ name: 'admin' });
 
-  async createAdmin(payload) {
-    // find the role with the name 'admin' if not found create it
-    let role = await Role.findOne({ name: "admin" });
+		if (!role) {
+			role = await Role.create({ name: 'admin' });
+			role.save();
+		}
 
-    if (!role) {
-      role = await Role.create({ name: "admin" });
-      role.save();
-    }
+		// Hash password
+		const salt = await bcrypt.genSalt(10);
+		const hashedPassword = await bcrypt.hash(payload.password, salt);
 
-    console.log(role);
+		// create the admin
+		const admin = new Admin({
+			...payload,
+			password: hashedPassword,
+			role: role._id,
+		});
 
-    // create the admin
-    const admin = new Admin({
-      ...payload,
-      role: role._id,
-    });
+		await admin.save();
 
-    await admin.save();
+		return admin;
+	}
 
-    return admin;
-  }
+	async loginAdmin(payload) {
+		const { email, password } = payload;
+		const admin = await Admin.findOne({ email })
+			.populate('role')
+			.select('+password');
 
-  async updateAdmin(id, payload) {
-    const admin = await Admin.findByIdAndUpdate
-      (id,
-        {
-          $set: payload,
-        },
-        { new: true }
-      );
-    return admin;
-  }
+		if (!admin) {
+			throw new Error('Invalid email or password');
+		}
 
-  async getAdmins() {
-    const admins = await Admin.find().populate("role");
-    return admins;
-  }
+		const validPassword = await bcrypt.compare(password, admin.password);
+		if (!validPassword) {
+			throw new Error('Invalid email or password');
+		}
 
-  async getAdmin(id) {
-    const admin = await Admin.findById(id).populate("role");
-    return admin;
-  }
+		// jwt
 
-  async deleteAdmin(id) {
-    await Admin.findByIdAndDelete(id);
-  }
+		const token = jwt.sign({}, config.jwt_secret);
 
+		return {
+			_id: admin._id,
+			email: admin.email,
+			role: admin.role,
+			token,
+		};
+	}
+
+	async updateAdmin(id, payload) {
+		const admin = await Admin.findByIdAndUpdate(
+			id,
+			{
+				$set: payload,
+			},
+			{ new: true }
+		);
+		return admin;
+	}
+
+	async getAdmins() {
+		const admins = await Admin.find().populate('role').select('-password');
+		return admins;
+	}
+
+	async getAdmin(id) {
+		const admin = await Admin.findById(id).populate('role').select('-password');
+		return admin;
+	}
+
+	async deleteAdmin(id) {
+		await Admin.findByIdAndDelete(id);
+	}
 }
 
 export default new AdminService();

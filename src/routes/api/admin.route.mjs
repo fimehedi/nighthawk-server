@@ -14,4 +14,6 @@ adminRouter
   .get(adminController.getAdmins)
   .delete(adminController.deleteAdmin);
 
+adminRouter.post("/login", adminController.loginAdmin);
+
 export default adminRouter;
