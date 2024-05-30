@@ -5,6 +5,7 @@
 	"main": "src/server.mjs",
 	"scripts": {
 		"start": "node src/server.mjs",
+		"build": "node src/server.mjs",
 		"dev": "nodemon src/server.mjs",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},

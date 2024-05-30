@@ -19,7 +19,7 @@ app.use('/api', indexRouter);
 // Error Handler
 app.use(globalErrorHandler);
 
-app.listen(config.port, config.host, async () => {
+app.listen(config.port, async () => {
 	console.log(
 		`Server is running in ${config.mode} mode at http://${config.host}:${config.port}`
 	);
