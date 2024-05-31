@@ -3,6 +3,9 @@ import subcategoryController from "../../modules/sub-category/sub.category.contr
 
 const subcategoryRouter = Router();
 
+
+subcategoryRouter.get("/pages", subcategoryController.getSubCategorysByPagination);
+
 subcategoryRouter
   .route("/:id")
   .get(subcategoryController.getSubCategorys)

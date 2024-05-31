@@ -22,6 +22,12 @@ class CategoryController {
     res.status(200).json(resDoc);
   });
 
+  getCategorysByPagination = catchError(async (req, res, next) => {
+    const { page, limit, order } = req.query;
+    const categorys = await categoryService.getCategorysByPagination({ page: parseInt(page), limit: parseInt(limit), order });
+    const resDoc = responseHandler(200, "Categorys retrieved successfully", categorys);
+    res.status(200).json(resDoc);
+  });
 
   getCategory = catchError(async (req, res, next) => {
     const category = await categoryService.getCategory(req.params.id);

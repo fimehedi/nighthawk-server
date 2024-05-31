@@ -4,6 +4,7 @@ import assetRouter from './asset.route.mjs';
 import categoryRouter from './category.route.mjs';
 import pageRouter from './page.route.mjs';
 import sliderRouter from './slider.route.mjs';
+import subcategoryRouter from './sub.category.route.mjs';
 
 const indexRouter = Router();
 
@@ -18,6 +19,7 @@ indexRouter.get('/', (req, res, next) => {
 indexRouter.use('/admins', adminRouter);
 indexRouter.use('/sliders', sliderRouter);
 indexRouter.use('/categories', categoryRouter);
+indexRouter.use('/sub-categories', subcategoryRouter);
 indexRouter.use('/assets', assetRouter);
 indexRouter.use('/pages', pageRouter);
 

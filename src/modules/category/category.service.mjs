@@ -28,8 +28,31 @@ class CategoryService {
     return categorys;
   }
 
+  async getCategorysByPagination({ page = 1, limit = 10, order = 'desc' }) {
+    const categorysPromise = Category.find()
+      .sort({ createdAt: order === 'asc' ? 1 : -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const countPromise = Category.countDocuments();
+
+    const [categorys, total] = await Promise.all([categorysPromise, countPromise]);
+
+    const totalPage = Math.ceil(total / limit);
+    const currentPage = page;
+
+    return {
+      result: categorys,
+      pagination: {
+        total,
+        totalPage,
+        currentPage,
+      }
+    };
+  }
+
   async getCategory(id) {
-    const category = await Category.findById(id);
+    const category = await Category.findById(id).populate('sub_categories');
     return category;
   }
 

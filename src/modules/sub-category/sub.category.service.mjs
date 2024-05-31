@@ -1,5 +1,5 @@
 import { Category } from "../../models/category/category.model.mjs";
-import { SubCategory } from "../../models/sub-subCategory/sub.subCategory.model.mjs";
+import { SubCategory } from "../../models/sub-category/sub.category.model.mjs";
 
 class SubCategoryService {
 
@@ -35,6 +35,30 @@ class SubCategoryService {
   async getSubCategorys() {
     const subCategorys = await SubCategory.find();
     return subCategorys;
+  }
+
+  async getSubCategorysByPagination({ page = 1, limit = 10, order = 'desc' }) {
+    const subCategorysPromise = SubCategory.find()
+      .sort({ createdAt: order === 'asc' ? 1 : -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const countPromise = SubCategory.countDocuments();
+
+    const [subCategorys, total] = await Promise.all([subCategorysPromise, countPromise]);
+
+    const totalPage = Math.ceil(total / limit);
+    const currentPage = page;
+
+    return {
+      result: subCategorys,
+      pagination: {
+        total,
+        totalPage,
+        currentPage,
+      }
+    };
+
   }
 
   async getSubCategory(id) {

@@ -26,6 +26,12 @@ class SliderController {
     res.status(200).json(resDoc);
   });
 
+  getSlidersByPagination = catchError(async (req, res, next) => {
+    const { page, limit, order } = req.query;
+    const sliders = await sliderService.getSlidersByPagination({ page: parseInt(page), limit: parseInt(limit), order });
+    const resDoc = responseHandler(200, "Sliders retrieved successfully", sliders);
+    res.status(200).json(resDoc);
+  });
 
   getSlider = catchError(async (req, res, next) => {
     const slider = await sliderService.getSlider(req.params.id);

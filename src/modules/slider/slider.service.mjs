@@ -28,6 +28,30 @@ class SliderService {
     return sliders;
   }
 
+  async getSlidersByPagination({ page = 1, limit = 10, order = desc }) {
+    const slidersPromise = Slider.find()
+      .sort({ createdAt: order === 'asc' ? 1 : -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const countPromise = Slider.countDocuments();
+
+    const [sliders, total] = await Promise.all([slidersPromise, countPromise]);
+
+    const totalPage = Math.ceil(total / limit);
+    const currentPage = page;
+
+    return {
+      result: sliders,
+      pagination: {
+        total,
+        totalPage,
+        currentPage,
+      }
+    };
+
+  }
+
   async getSlider(id) {
     const slider = await Slider.findById(id);
     return slider;
