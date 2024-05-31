@@ -26,6 +26,8 @@ class AdminService {
 
 		await admin.save();
 
+		delete admin._doc.password;
+
 		return admin;
 	}
 
@@ -46,7 +48,17 @@ class AdminService {
 
 		// jwt
 
-		const token = jwt.sign({}, config.jwt_secret);
+		const token = jwt.sign(
+			{
+				_id: admin._id,
+				email: admin.email,
+				role: admin.role,
+			},
+			config.jwt_secret,
+			{
+				expiresIn: '25h',
+			}
+		);
 
 		return {
 			_id: admin._id,

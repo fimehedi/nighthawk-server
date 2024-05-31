@@ -6,13 +6,13 @@ const adminRouter = Router();
 adminRouter
   .route("/:id")
   .get(adminController.getAdmin)
-  .put(adminController.updateAdmin);
+  .put(adminController.updateAdmin)
+  .delete(adminController.deleteAdmin);
 
 adminRouter
   .route("/")
   .post(adminController.createAdmin)
-  .get(adminController.getAdmins)
-  .delete(adminController.deleteAdmin);
+  .get(adminController.getAdmins);
 
 adminRouter.post("/login", adminController.loginAdmin);
 
