@@ -8,12 +8,13 @@ categoryRouter.get("/pages", categoryController.getCategorysByPagination);
 categoryRouter
   .route("/:id")
   .get(categoryController.getCategory)
-  .put(categoryController.updateCategory);
+  .put(categoryController.updateCategory)
+  .delete(categoryController.deleteCategory);
 
 categoryRouter
   .route("/")
   .post(categoryController.createCategory)
   .get(categoryController.getCategorys)
-  .delete(categoryController.deleteCategory);
+  
 
 export default categoryRouter;
