@@ -9,12 +9,13 @@ subcategoryRouter.get("/pages", subcategoryController.getSubCategorysByPaginatio
 subcategoryRouter
   .route("/:id")
   .get(subcategoryController.getSubCategorys)
-  .put(subcategoryController.updateSubCategory);
+  .put(subcategoryController.updateSubCategory)
+  .delete(subcategoryController.deleteSubCategory);
 
 subcategoryRouter
   .route("/")
   .post(subcategoryController.createSubCategory)
   .get(subcategoryController.getSubCategorys)
-  .delete(subcategoryController.deleteSubCategory);
+ 
 
 export default subcategoryRouter;
