@@ -41,7 +41,8 @@ class SubCategoryService {
     const subCategorysPromise = SubCategory.find()
       .sort({ createdAt: order === 'asc' ? 1 : -1 })
       .skip((page - 1) * limit)
-      .limit(limit);
+      .limit(limit)
+      .populate('category');
 
     const countPromise = SubCategory.countDocuments();
 
@@ -62,7 +63,7 @@ class SubCategoryService {
   }
 
   async getSubCategory(id) {
-    const subCategory = await SubCategory.findById(id);
+    const subCategory = await SubCategory.findById(id).populate('category');
     return subCategory;
   }
 
