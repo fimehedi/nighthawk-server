@@ -8,7 +8,7 @@ subcategoryRouter.get("/pages", subcategoryController.getSubCategorysByPaginatio
 
 subcategoryRouter
   .route("/:id")
-  .get(subcategoryController.getSubCategorys)
+  .get(subcategoryController.getSubCategory)
   .put(subcategoryController.updateSubCategory)
   .delete(subcategoryController.deleteSubCategory);
 
