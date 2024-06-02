@@ -6,7 +6,7 @@ const assetSchema = new Schema({
 		required: true,
 	},
 	size: {
-		type: Number,
+		type: String,
 	},
 	resolution: {
 		type: String,

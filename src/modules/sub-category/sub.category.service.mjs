@@ -33,7 +33,7 @@ class SubCategoryService {
   }
 
   async getSubCategorys() {
-    const subCategorys = await SubCategory.find();
+    const subCategorys = await SubCategory.find().populate('category');
     return subCategorys;
   }
 

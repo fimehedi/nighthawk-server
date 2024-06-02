@@ -17,7 +17,7 @@ class SubCategoryController {
   });
 
   getSubCategorys = catchError(async (req, res, next) => {
-    const categorys = await subcategoryService.getSubCategory(req.params.id);
+    const categorys = await subcategoryService.getSubCategorys();
     const resDoc = responseHandler(200, "SubCategorys retrieved successfully", categorys);
     res.status(200).json(resDoc);
   });
