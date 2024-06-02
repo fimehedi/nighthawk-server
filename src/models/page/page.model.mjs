@@ -8,7 +8,7 @@ const pagesSchema = new Schema({
   },
   cover: {
     type: String,
-    required: true,
+    // required: true,
   },
   short_description: {
     type: String,
