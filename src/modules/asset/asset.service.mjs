@@ -1,42 +1,62 @@
-import { Asset } from "../../models/asset/asset.model.mjs";
+import { Asset } from '../../models/asset/asset.model.mjs';
 
 class AssetService {
+	async createAsset(payload) {
+		// create the asset
+		const asset = new Asset(payload);
 
-  async createAsset(payload) {
+		await asset.save();
 
-    // create the asset
-    const asset = new Asset(payload);
+		return asset;
+	}
 
-    await asset.save();
+	async updateAsset(id, payload) {
+		const asset = await Asset.findByIdAndUpdate(
+			id,
+			{
+				$set: payload,
+			},
+			{ new: true }
+		);
+		return asset;
+	}
 
-    return asset;
-  }
+	async getAssets() {
+		const assets = await Asset.find().populate('category');
+		return assets;
+	}
 
-  async updateAsset(id, payload) {
-    const asset = await Asset.findByIdAndUpdate
-      (id,
-        {
-          $set: payload,
-        },
-        { new: true }
-      );
-    return asset;
-  }
+	async getAssetsByPagination({ page = 1, limit = 10, order = 'desc' }) {
+		const assetsPromise = Asset.find()
+			.sort({ createdAt: order === 'asc' ? 1 : -1 })
+			.skip((page - 1) * limit)
+			.limit(limit);
 
-  async getAssets() {
-    const assets = await Asset.find().populate("category");
-    return assets;
-  }
+		const countPromise = Asset.countDocuments();
 
-  async getAsset(id) {
-    const asset = await Asset.findById(id).populate("category");
-    return asset;
-  }
+		const [assets, total] = await Promise.all([assetsPromise, countPromise]);
 
-  async deleteAsset(id) {
-    await Asset.findByIdAndDelete(id);
-  }
+		const totalPage = Math.ceil(total / limit);
+		const currentPage = page;
 
+		return {
+			result: assets,
+			pagination: {
+				total,
+				totalPage,
+				currentPage,
+			},
+		};
+	}
+
+	async getAsset(id) {
+		const asset = await Asset.findById(id).populate('category');
+		return asset;
+	}
+
+	async deleteAsset(id) {
+		await Asset.findByIdAndDelete(id);
+	}
 }
 
 export default new AssetService();

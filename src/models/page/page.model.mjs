@@ -1,21 +1,25 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
 const pagesSchema = new Schema({
-  slug: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  cover: {
-    type: String,
-    // required: true,
-  },
-  short_description: {
-    type: String,
-  },
-  content: {
-    type: String,
-  },
+	title: {
+		type: String,
+		required: true,
+	},
+	slug: {
+		type: String,
+		required: true,
+		unique: true,
+	},
+	cover: {
+		type: String,
+		// required: true,
+	},
+	short_description: {
+		type: String,
+	},
+	content: {
+		type: String,
+	},
 });
 
-export const Page = model("Page", pagesSchema);
+export const Page = model('Page', pagesSchema);

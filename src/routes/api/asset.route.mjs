@@ -3,6 +3,8 @@ import assetController from "../../modules/asset/asset.controller.mjs";
 
 const assetRouter = Router();
 
+assetRouter.get("/pages", assetController.getAssetsByPagination);
+
 assetRouter
   .route("/:id")
   .get(assetController.getAsset)
