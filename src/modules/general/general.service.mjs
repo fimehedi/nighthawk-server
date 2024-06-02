@@ -1,4 +1,5 @@
 import { AboutUs } from '../../models/general/about.us.model.mjs';
+import { Setting } from '../../models/general/settings.model.mjs';
 
 class GeneralService {
 	async upsertAboutUs(payload) {
@@ -21,7 +22,7 @@ class GeneralService {
 	}
 
 	async upsertApplicationSettings(payload) {
-		const settings = await AboutUs.findOneAndUpdate(
+		const settings = await Setting.findOneAndUpdate(
 			{
 				slug: 'settings',
 			},
@@ -35,7 +36,7 @@ class GeneralService {
 
 	async getApplicationSettings() {
 		// find with slug name settings
-		const settings = await AboutUs.findOne({ slug: 'settings' });
+		const settings = await Setting.findOne({ slug: 'settings' });
 		return settings;
 	}
 }
