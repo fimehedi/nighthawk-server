@@ -7,7 +7,7 @@ export const connectDB = async () => {
 
   try {
     mongoose.connect(
-      config.db_uri, {}
+      'mongodb+srv://vercel-admin-user:M;8=wSW9ap&>HF^@nighthawk.e7ccn0f.mongodb.net/nighthawk?retryWrites=true&w=majority&appName=Nighthawk'
     );
   } catch (error) {
     console.error(error);
