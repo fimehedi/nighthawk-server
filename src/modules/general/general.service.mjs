@@ -1,14 +1,22 @@
 import { AboutUs } from '../../models/general/about.us.model.mjs';
 import { Setting } from '../../models/general/settings.model.mjs';
+import isArrayElementExist from '../../utils/isArrayElementExist.mjs';
 
 class GeneralService {
 	async upsertAboutUs(payload) {
+		const images = {};
+		if (isArrayElementExist(payload.files)) {
+			payload.files.forEach((file) => {
+				images[file.fieldname] = file.filename;
+			});
+		}
+
 		const aboutUs = await AboutUs.findOneAndUpdate(
 			{
 				slug: 'about-us',
 			},
 			{
-				$set: payload,
+				$set: { ...payload, ...images },
 			},
 			{ new: true, upsert: true }
 		);
@@ -22,12 +30,20 @@ class GeneralService {
 	}
 
 	async upsertApplicationSettings(payload) {
+
+		const images = {};
+		if (isArrayElementExist(payload.files)) {
+			payload.files.forEach((file) => {
+				images[file.fieldname] = file.filename;
+			});
+		}
+
 		const settings = await Setting.findOneAndUpdate(
 			{
 				slug: 'settings',
 			},
 			{
-				$set: payload,
+				$set: { ...payload, ...images },
 			},
 			{ new: true, upsert: true }
 		);

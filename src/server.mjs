@@ -19,6 +19,7 @@ app.use(cors({
 app.use(morgan('dev'));
 // Routes
 app.use('/api', indexRouter);
+app.use('/api/uploads', express.static('uploads'));
 
 // Error Handler
 app.use(globalErrorHandler);

@@ -6,13 +6,17 @@ class PageController {
 	createPage = catchError(async (req, res, next) => {
 		const page = await pageService.createPage({
 			...req.body,
+			files: req.files,
 		});
 		const resDoc = responseHandler(201, 'Page created successfully', page);
 		res.status(201).json(resDoc);
 	});
 
 	updatePage = catchError(async (req, res, next) => {
-		const page = await pageService.updatePage(req.params.id, req.body);
+		const page = await pageService.updatePage(req.params.id, {
+			...req.body,
+			files: req.files,
+		});
 		const resDoc = responseHandler(200, 'Page updated successfully', page);
 		res.status(200).json(resDoc);
 	});

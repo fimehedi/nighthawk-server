@@ -1,22 +1,36 @@
 import { Category } from "../../models/category/category.model.mjs";
+import isArrayElementExist from "../../utils/isArrayElementExist.mjs";
 
 class CategoryService {
 
   async createCategory(payload) {
 
+    const images = {};
+    if (isArrayElementExist(payload.files)) {
+      payload.files.forEach((file) => {
+        images[file.fieldname] = file.filename;
+      });
+    }
+
     // create the category
-    const category = new Category(payload);
-
+    const category = new Category({ ...payload, images });
     await category.save();
-
     return category;
   }
 
   async updateCategory(id, payload) {
+
+    const images = {};
+    if (isArrayElementExist(payload.files)) {
+      payload.files.forEach((file) => {
+        images[file.fieldname] = file.filename;
+      });
+    }
+
     const category = await Category.findByIdAndUpdate
       (id,
         {
-          $set: payload,
+          $set: { ...payload, images },
         },
         { new: true }
       );

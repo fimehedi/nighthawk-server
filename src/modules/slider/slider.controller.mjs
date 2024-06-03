@@ -8,14 +8,18 @@ class SliderController {
     const slider = await sliderService.createSlider({
       name,
       image,
-      short_description
+      short_description,
+      files: req.files,
     });
     const resDoc = responseHandler(201, "Slider created successfully", slider);
     res.status(201).json(resDoc);
   });
 
   updateSlider = catchError(async (req, res, next) => {
-    const slider = await sliderService.updateSlider(req.params.id, req.body);
+    const slider = await sliderService.updateSlider(req.params.id, {
+      ...req.body,
+      files: req.files,
+    });
     const resDoc = responseHandler(200, "Slider updated successfully", slider);
     res.status(200).json(resDoc);
   });

@@ -1,10 +1,17 @@
 import { Category } from "../../models/category/category.model.mjs";
 import { SubCategory } from "../../models/sub-category/sub.category.model.mjs";
+import isArrayElementExist from "../../utils/isArrayElementExist.mjs";
 
 class SubCategoryService {
 
   async createSubCategory(payload) {
 
+    const images = {};
+    if (isArrayElementExist(payload.files)) {
+      payload.files.forEach((file) => {
+        images[file.fieldname] = file.filename;
+      });
+    }
     const category = await Category.findById(payload.category);
 
     if (!category) {
@@ -12,8 +19,10 @@ class SubCategoryService {
     }
 
     // create the subCategory
-    const subCategory = new SubCategory(payload);
-
+    const subCategory = new SubCategory({
+      ...payload,
+      ...images,
+    });
     await subCategory.save();
     category.sub_categories.push(subCategory);
     await category.save();
@@ -22,10 +31,20 @@ class SubCategoryService {
   }
 
   async updateSubCategory(id, payload) {
+    const images = {};
+    if (isArrayElementExist(payload.files)) {
+      payload.files.forEach((file) => {
+        images[file.fieldname] = file.filename;
+      });
+    }
+
     const subCategory = await SubCategory.findByIdAndUpdate
       (id,
         {
-          $set: payload,
+          $set: {
+            ...payload,
+            ...images,
+          },
         },
         { new: true }
       );

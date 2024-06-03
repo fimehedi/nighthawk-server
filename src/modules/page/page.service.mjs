@@ -1,12 +1,19 @@
 import { Page } from '../../models/page/page.model.mjs';
+import isArrayElementExist from '../../utils/isArrayElementExist.mjs';
 
 class PageService {
 	async createPage(payload) {
 		const slug = payload.title.toLowerCase().split(' ').join('-');
-
+		const images = {};
+		if (isArrayElementExist(payload.files)) {
+			payload.files.forEach((file) => {
+				images[file.fieldname] = file.filename;
+			});
+		}
 		// create the page
 		const page = new Page({
 			...payload,
+			...images,
 			slug,
 		});
 
@@ -16,10 +23,17 @@ class PageService {
 	}
 
 	async updatePage(id, payload) {
+		const images = {};
+		if (isArrayElementExist(payload.files)) {
+			payload.files.forEach((file) => {
+				images[file.fieldname] = file.filename;
+			});
+		}
+
 		const page = await Page.findByIdAndUpdate(
 			id,
 			{
-				$set: payload,
+				$set: { ...payload, ...images },
 			},
 			{ new: true }
 		);

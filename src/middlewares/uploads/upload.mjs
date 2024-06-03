@@ -1,10 +1,20 @@
-import multer from "multer";
+import multer from 'multer';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const storage = multer.diskStorage();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-export const upload = multer({
-  storage,
-  fileFilter: (req, file, cb) => {
-    cb(null, true);
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, '../../../uploads/'),
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
 });
+
+const upload = multer({
+  storage: storage,
+  // limits: 10 
+});
+
+export default upload;

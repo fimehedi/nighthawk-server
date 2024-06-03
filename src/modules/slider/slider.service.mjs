@@ -1,11 +1,22 @@
 import { Slider } from "../../models/slider/slider.model.mjs";
+import isArrayElementExist from "../../utils/isArrayElementExist.mjs";
 
 class SliderService {
 
   async createSlider(payload) {
 
+    const images = {};
+    if (isArrayElementExist(payload.files)) {
+      payload.files.forEach((file) => {
+        images[file.fieldname] = file.filename;
+      });
+    }
+
     // create the slider
-    const slider = new Slider(payload);
+    const slider = new Slider({
+      ...payload,
+      ...images,
+    });
 
     await slider.save();
 
@@ -13,10 +24,18 @@ class SliderService {
   }
 
   async updateSlider(id, payload) {
+
+    const images = {};
+    if (isArrayElementExist(payload.files)) {
+      payload.files.forEach((file) => {
+        images[file.fieldname] = file.filename;
+      });
+    }
+
     const slider = await Slider.findByIdAndUpdate
       (id,
         {
-          $set: payload,
+          $set: { ...payload, ...images },
         },
         { new: true }
       );

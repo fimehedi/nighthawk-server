@@ -4,7 +4,9 @@ import adminService from './general.service.mjs';
 
 class GeneralController {
 	upsertAboutUs = catchError(async (req, res, next) => {
-		const aboutUs = await adminService.upsertAboutUs(req.body);
+		const aboutUs = await adminService.upsertAboutUs({
+			...req.body, files: req.files
+		});
 		const resDoc = responseHandler(
 			200,
 			'About Us updated successfully',
@@ -24,7 +26,7 @@ class GeneralController {
 	});
 
 	upsertApplicationSettings = catchError(async (req, res, next) => {
-		const settings = await adminService.upsertApplicationSettings(req.body);
+		const settings = await adminService.upsertApplicationSettings({ ...req.body, files: req.files });
 		const resDoc = responseHandler(
 			200,
 			'Application settings updated successfully',

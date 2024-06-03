@@ -5,13 +5,19 @@ import subcategoryService from "./sub.category.service.mjs";
 class SubCategoryController {
   createSubCategory = catchError(async (req, res, next) => {
 
-    const category = await subcategoryService.createSubCategory(req.body);
+    const category = await subcategoryService.createSubCategory({
+      ...req.body,
+      files: req.files,
+    });
     const resDoc = responseHandler(201, "SubCategory created successfully", category);
     res.status(201).json(resDoc);
   });
 
   updateSubCategory = catchError(async (req, res, next) => {
-    const category = await subcategoryService.updateSubCategory(req.params.id, req.body);
+    const category = await subcategoryService.updateSubCategory(req.params.id, {
+      ...req.body,
+      files: req.files,
+    });
     const resDoc = responseHandler(200, "SubCategory updated successfully", category);
     res.status(200).json(resDoc);
   });

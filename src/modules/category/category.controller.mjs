@@ -5,13 +5,19 @@ import categoryService from "./category.service.mjs";
 class CategoryController {
   createCategory = catchError(async (req, res, next) => {
 
-    const category = await categoryService.createCategory(req.body);
+    const category = await categoryService.createCategory({
+      ...req.body,
+      files: req.files,
+    });
     const resDoc = responseHandler(201, "Category created successfully", category);
     res.status(201).json(resDoc);
   });
 
   updateCategory = catchError(async (req, res, next) => {
-    const category = await categoryService.updateCategory(req.params.id, req.body);
+    const category = await categoryService.updateCategory(req.params.id, {
+      ...req.body,
+      files: req.files,
+    });
     const resDoc = responseHandler(200, "Category updated successfully", category);
     res.status(200).json(resDoc);
   });
