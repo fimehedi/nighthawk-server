@@ -82,7 +82,7 @@ class SubCategoryService {
   }
 
   async getSubCategory(id) {
-    const subCategory = await SubCategory.findById(id).populate('category');
+    const subCategory = await SubCategory.findById(id).populate(['category','assets']);
     return subCategory;
   }
 

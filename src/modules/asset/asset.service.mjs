@@ -1,12 +1,21 @@
 import { Asset } from '../../models/asset/asset.model.mjs';
+import { SubCategory } from '../../models/sub-category/sub.category.model.mjs';
 
 class AssetService {
 	async createAsset(payload) {
 		// create the asset
-		const asset = new Asset(payload);
+		const subCategory = await SubCategory.findById(payload.sub_category);
 
+		if (!subCategory) {
+			throw new Error('SubCategory not found');
+		}
+
+		// create the asset
+		const asset = new Asset(payload);
 		await asset.save();
 
+		subCategory.assets.push(asset);
+		await subCategory.save();
 		return asset;
 	}
 
