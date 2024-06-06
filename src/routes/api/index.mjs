@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import commonController from '../../modules/common/common.controller.mjs';
 import adminRouter from './admin.route.mjs';
 import assetRouter from './asset.route.mjs';
 import categoryRouter from './category.route.mjs';
@@ -17,6 +18,8 @@ indexRouter.get('/', (req, res, next) => {
 		message: 'Welcome to the API',
 	});
 });
+
+indexRouter.get('/search', commonController.search);
 
 indexRouter.use('/admins', adminRouter);
 indexRouter.use('/sliders', sliderRouter);

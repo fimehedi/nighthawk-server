@@ -31,7 +31,7 @@ class AssetService {
 	}
 
 	async getAssets() {
-		const assets = await Asset.find().populate('category');
+		const assets = await Asset.find().populate('sub_category');
 		return assets;
 	}
 

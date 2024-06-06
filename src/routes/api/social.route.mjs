@@ -4,7 +4,7 @@ import socialController from '../../modules/social/social.controller.mjs';
 
 const socialRouter = Router();
 
-socialRouter.get('/socials', socialController.getSocialsByPagination);
+socialRouter.get('/pages', socialController.getSocialsByPagination);
 
 socialRouter
 	.route('/:id')
