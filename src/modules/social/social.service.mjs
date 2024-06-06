@@ -3,7 +3,7 @@ import isArrayElementExist from '../../utils/isArrayElementExist.mjs';
 
 class SocialService {
 	async createSocial(payload) {
-		const slug = payload.title.toLowerCase().split(' ').join('-');
+		const slug = payload.name.toLowerCase().split(' ').join('-');
 		const images = {};
 		if (isArrayElementExist(payload.files)) {
 			payload.files.forEach((file) => {
