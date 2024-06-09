@@ -38,7 +38,14 @@ class CategoryService {
   }
 
   async getCategorys() {
-    const categorys = await Category.find();
+    const categorys = await Category.find().populate([
+      {
+        path: "sub_categories",
+        populate: {
+          path: "assets",
+        },
+      },
+    ]);
     return categorys;
   }
 
