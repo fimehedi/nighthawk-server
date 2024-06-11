@@ -3,6 +3,9 @@ import { SubCategory } from '../../models/sub-category/sub.category.model.mjs';
 
 class AssetService {
 	async createAsset(payload) {
+
+		console.log(payload.files);
+
 		// create the asset
 		const subCategory = await SubCategory.findById(payload.sub_category);
 
