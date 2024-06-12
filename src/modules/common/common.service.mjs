@@ -1,10 +1,9 @@
-import { Asset } from "../../models/asset/asset.model.mjs";
-import { Category } from "../../models/category/category.model.mjs";
-import { SubCategory } from "../../models/sub-category/sub.category.model.mjs";
+import { Asset } from '../../models/asset/asset.model.mjs';
+import { Category } from '../../models/category/category.model.mjs';
+import { SubCategory } from '../../models/sub-category/sub.category.model.mjs';
 
 class CommonService {
 	async search(searchTerm) {
-
 		// category find by name and short_description
 		const category = await Category.find({
 			$or: [
@@ -18,14 +17,21 @@ class CommonService {
 				{ name: { $regex: searchTerm, $options: 'i' } },
 				{ short_description: { $regex: searchTerm, $options: 'i' } },
 			],
-		});
+		}).populate('category');
 
 		const asset = await Asset.find({
 			$or: [
 				{ name: { $regex: searchTerm, $options: 'i' } },
 				{ description: { $regex: searchTerm, $options: 'i' } },
 			],
-		});
+		}).populate([
+			{
+				path: 'sub_category',
+				populate: {
+					path: 'category',
+				},
+			},
+		]);
 
 		return {
 			category,
