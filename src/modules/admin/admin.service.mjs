@@ -1,41 +1,32 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from '../../config/config.mjs';
-import { Admin } from '../../models/admin/admin.model.mjs';
-import { Role } from '../../models/role/role.model.mjs';
+import { prisma } from '../../db/prisma.mjs';
 class AdminService {
 	async createAdmin(payload) {
-		// find the role with the name 'admin' if not found create it
-		let role = await Role.findOne({ name: 'admin' });
-
-		if (!role) {
-			role = await Role.create({ name: 'admin' });
-			role.save();
-		}
-
 		// Hash password
 		const salt = await bcrypt.genSalt(10);
 		const hashedPassword = await bcrypt.hash(payload.password, salt);
 
 		// create the admin
-		const admin = new Admin({
-			...payload,
-			password: hashedPassword,
-			role: role._id,
+		const user = await prisma.user.create({
+			data: {
+				email: payload.email,
+				password: hashedPassword,
+			}
 		});
 
-		await admin.save();
-
-		delete admin._doc.password;
-
-		return admin;
+		return user;
 	}
 
 	async loginAdmin(payload) {
 		const { email, password } = payload;
-		const admin = await Admin.findOne({ email })
-			.populate('role')
-			.select('+password');
+
+		const admin = await prisma.user.findUnique({
+			where: {
+				email,
+			},
+		});
 
 		if (!admin) {
 			throw new Error('Invalid email or password');
@@ -50,9 +41,8 @@ class AdminService {
 
 		const token = jwt.sign(
 			{
-				_id: admin._id,
+				id: admin.id,
 				email: admin.email,
-				role: admin.role,
 			},
 			config.jwt_secret,
 			{
@@ -61,36 +51,56 @@ class AdminService {
 		);
 
 		return {
-			_id: admin._id,
+			id: admin.id,
 			email: admin.email,
-			role: admin.role,
 			token,
 		};
 	}
 
 	async updateAdmin(id, payload) {
-		const admin = await Admin.findByIdAndUpdate(
-			id,
-			{
-				$set: payload,
+		const admin = await prisma.user.update({
+			where: {
+				id: parseInt(id),
 			},
-			{ new: true }
-		);
+			data: {
+				email: payload.email,
+			},
+		});
+
 		return admin;
 	}
 
 	async getAdmins() {
-		const admins = await Admin.find().populate('role').select('-password');
+		const admins = await prisma.user.findMany({
+			select: {
+				id: true,
+				email: true,
+			},
+		});
 		return admins;
 	}
 
 	async getAdmin(id) {
-		const admin = await Admin.findById(id).populate('role').select('-password');
+		// const admin = await Admin.findById(id).populate('role').select('-password');
+		const admin = await prisma.user.findUnique({
+			where: {
+				id: parseInt(id),
+
+			},
+			select: {
+				id: true,
+				email: true,
+			},
+		});
 		return admin;
 	}
 
 	async deleteAdmin(id) {
-		await Admin.findByIdAndDelete(id);
+		await prisma.user.delete({
+			where: {
+				id: parseInt(id),
+			},
+		});
 	}
 }
 

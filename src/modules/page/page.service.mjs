@@ -1,4 +1,4 @@
-import { Page } from '../../models/page/page.model.mjs';
+import { prisma } from '../../db/prisma.mjs';
 import isArrayElementExist from '../../utils/isArrayElementExist.mjs';
 
 class PageService {
@@ -10,14 +10,17 @@ class PageService {
 				images[file.fieldname] = file.filename;
 			});
 		}
-		// create the page
-		const page = new Page({
-			...payload,
-			...images,
-			slug,
-		});
 
-		await page.save();
+		delete payload.files;
+
+		const page = await prisma.page.create({
+			data: {
+				...payload,
+				slug,
+				...images,
+			},
+
+		});
 
 		return page;
 	}
@@ -30,28 +33,40 @@ class PageService {
 			});
 		}
 
-		const page = await Page.findByIdAndUpdate(
-			id,
-			{
-				$set: { ...payload, ...images },
+		delete payload.files;
+		const page = await prisma.page.update({
+			where: {
+				id: parseInt(id),
 			},
-			{ new: true }
-		);
+			data: {
+				...payload,
+				...images,
+			},
+		});
 		return page;
 	}
 
 	async getPages() {
-		const pages = await Page.find();
+		// const pages = await Page.find();
+		const pages = await prisma.page.findMany();
 		return pages;
 	}
 
 	async getPagesByPagination({ page = 1, limit = 10, order = 'desc' }) {
-		const pagesPromise = Page.find()
-			.sort({ createdAt: order === 'asc' ? 1 : -1 })
-			.skip((page - 1) * limit)
-			.limit(limit);
+		// const pagesPromise = Page.find()
+		// 	.sort({ createdAt: order === 'asc' ? 1 : -1 })
+		// 	.skip((page - 1) * limit)
+		// 	.limit(limit);
+		const pagesPromise = prisma.page.findMany({
+			skip: (page - 1) * limit,
+			take: limit,
+			orderBy: {
+				id: order === 'asc' ? 'asc' : 'desc',
+			},
+		});
 
-		const countPromise = Page.countDocuments();
+		// const countPromise = Page.countDocuments();
+		const countPromise = prisma.page.count();
 
 		const [pages, total] = await Promise.all([pagesPromise, countPromise]);
 
@@ -69,12 +84,21 @@ class PageService {
 	}
 
 	async getPage(id) {
-		const page = await Page.findById(id);
+		// const page = await Page.findById(id);
+		const page = await prisma.page.findUnique({
+			where: {
+				id: parseInt(id),
+			},
+		});
 		return page;
 	}
 
 	async deletePage(id) {
-		await Page.findByIdAndDelete(id);
+		await prisma.page.delete({
+			where: {
+				id: parseInt(id),
+			},
+		});
 	}
 }
 

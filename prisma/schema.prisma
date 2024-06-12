@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique(map: "email_UNIQUE")
+  password String
+}
+
+model Category {
+  id                Int           @id @default(autoincrement())
+  name              String
+  short_description String
+  image             String
+  sub_categories    SubCategory[]
+}
+
+model SubCategory {
+  id                Int      @id @default(autoincrement())
+  name              String
+  short_description String
+  image             String
+  category          Category @relation(fields: [category_id], references: [id])
+  category_id       Int
+  Asset             Asset[]
+}
+
+model Asset {
+  id              Int           @id @default(autoincrement())
+  name            String
+  cover           String
+  resolution      String
+  size            String
+  sub_category    SubCategory   @relation(fields: [sub_category_id], references: [id])
+  sub_category_id Int
+  AssetDetail     AssetDetail[]
+}
+
+model AssetDetail {
+  id       Int    @id @default(autoincrement())
+  image    String
+  asset_id Int
+  asset    Asset  @relation(fields: [asset_id], references: [id])
+}
+
+model AboutUs {
+  id                Int    @id @default(autoincrement())
+  slug              String @unique
+  title             String
+  cover             String
+  short_description String
+  content           String
+}
+
+model Setting {
+  id               Int    @id @default(autoincrement())
+  slug             String @unique
+  site_name        String
+  site_description String
+  site_logo        String
+  site_favicon     String
+  site_email       String
+  site_phone       String
+  site_address     String
+  site_footer      String
+}
+
+model Page {
+  id                Int    @id @default(autoincrement())
+  slug              String @unique
+  title             String
+  cover             String
+  short_description String
+  content           String
+}
+
+model Slider {
+  id                Int    @id @default(autoincrement())
+  name              String
+  logo              String
+  short_description String
+  image             String
+}
+
+model Social {
+  id    Int    @id @default(autoincrement())
+  name  String
+  url   String
+  icon  String
+  order Int    @default(0)
+}

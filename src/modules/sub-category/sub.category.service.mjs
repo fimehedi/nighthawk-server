@@ -1,5 +1,4 @@
-import { Category } from "../../models/category/category.model.mjs";
-import { SubCategory } from "../../models/sub-category/sub.category.model.mjs";
+import { prisma } from "../../db/prisma.mjs";
 import isArrayElementExist from "../../utils/isArrayElementExist.mjs";
 
 class SubCategoryService {
@@ -12,20 +11,28 @@ class SubCategoryService {
         images[file.fieldname] = file.filename;
       });
     }
-    const category = await Category.findById(payload.category);
+    // const category = await Category.findById(payload.category);
 
-    if (!category) {
-      throw new Error("Category not found");
-    }
+    // if (!category) {
+    //   throw new Error("Category not found");
+    // }
 
-    // create the subCategory
-    const subCategory = new SubCategory({
-      ...payload,
-      ...images,
+    // // create the subCategory
+    // const subCategory = new SubCategory({
+    //   ...payload,
+    //   ...images,
+    // });
+
+    delete payload.files;
+
+    const subCategory = await prisma.subCategory.create({
+      data: {
+        ...payload,
+        category_id: parseInt(payload.category_id),
+        ...images,
+
+      }
     });
-    await subCategory.save();
-    category.sub_categories.push(subCategory);
-    await category.save();
 
     return subCategory;
   }
@@ -38,32 +45,50 @@ class SubCategoryService {
       });
     }
 
-    const subCategory = await SubCategory.findByIdAndUpdate
-      (id,
-        {
-          $set: {
-            ...payload,
-            ...images,
-          },
-        },
-        { new: true }
-      );
+    delete payload.files;
+    const subCategory = await prisma.subCategory.update({
+      where: {
+        id: parseInt(id)
+      },
+      data: {
+        ...payload,
+        category_id: parseInt(payload.category_id),
+        ...images
+      }
+    });
     return subCategory;
   }
 
   async getSubCategorys() {
-    const subCategorys = await SubCategory.find().populate('category');
+    // const subCategorys = await SubCategory.find().populate('category');
+    const subCategorys = await prisma.subCategory.findMany({
+      include: {
+        category: true,
+      },
+    });
     return subCategorys;
   }
 
   async getSubCategorysByPagination({ page = 1, limit = 10, order = 'desc' }) {
-    const subCategorysPromise = SubCategory.find()
-      .sort({ createdAt: order === 'asc' ? 1 : -1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .populate('category');
+    // const subCategorysPromise = SubCategory.find()
+    //   .sort({ createdAt: order === 'asc' ? 1 : -1 })
+    //   .skip((page - 1) * limit)
+    //   .limit(limit)
+    //   .populate('category');
 
-    const countPromise = SubCategory.countDocuments();
+    const subCategorysPromise = prisma.subCategory.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: {
+        id: order === 'asc' ? 'asc' : 'desc'
+      },
+      include: {
+        category: true,
+      }
+    });
+
+    // const countPromise = SubCategory.countDocuments();
+    const countPromise = prisma.subCategory.count();
 
     const [subCategorys, total] = await Promise.all([subCategorysPromise, countPromise]);
 
@@ -82,12 +107,25 @@ class SubCategoryService {
   }
 
   async getSubCategory(id) {
-    const subCategory = await SubCategory.findById(id).populate(['category','assets']);
+    // const subCategory = await SubCategory.findById(id).populate(['category', 'assets']);
+    const subCategory = await prisma.subCategory.findUnique({
+      where: {
+        id: parseInt(id)
+      },
+      include: {
+        category: true,
+        assets: true
+      }
+    });
     return subCategory;
   }
 
   async deleteSubCategory(id) {
-    await SubCategory.findByIdAndDelete(id);
+    await prisma.subCategory.delete({
+      where: {
+        id: parseInt(id)
+      }
+    });
   }
 
 }

@@ -1,4 +1,4 @@
-import { Category } from "../../models/category/category.model.mjs";
+import { prisma } from "../../db/prisma.mjs";
 import isArrayElementExist from "../../utils/isArrayElementExist.mjs";
 
 class CategoryService {
@@ -12,9 +12,12 @@ class CategoryService {
       });
     }
 
+    delete payload.files;
+
     // create the category
-    const category = new Category({ ...payload, images });
-    await category.save();
+    const category = await prisma.category.create({
+      data: { ...payload, ...images }
+    });
     return category;
   }
 
@@ -27,28 +30,52 @@ class CategoryService {
       });
     }
 
-    const category = await Category.findByIdAndUpdate
-      (id,
-        {
-          $set: { ...payload, images },
-        },
-        { new: true }
-      );
+    delete payload.files;
+    const category = await prisma.category.update({
+      where: {
+        id: parseInt(id)
+      },
+      data: {
+        ...payload,
+        ...images
+      }
+    });
     return category;
   }
 
   async getCategorys() {
-    const categorys = await Category.find();
+    // const categorys = await Category.find();
+    const categorys = await prisma.category.findMany(
+      {
+        include: {
+          sub_categories: true
+        }
+      }
+    );
     return categorys;
   }
 
   async getCategorysByPagination({ page = 1, limit = 10, order = 'desc' }) {
-    const categorysPromise = Category.find()
-      .sort({ createdAt: order === 'asc' ? 1 : -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
+    // const categorysPromise = Category.find()
+    //   .sort({ createdAt: order === 'asc' ? 1 : -1 })
+    //   .skip((page - 1) * limit)
+    //   .limit(limit);
 
-    const countPromise = Category.countDocuments();
+    const categorysPromise = prisma.category.findMany({
+      take: limit || 10,
+      skip: (page - 1) * limit,
+      orderBy: [
+        {
+          id: order
+        }
+      ],
+      include: {
+        sub_categories: true
+      }
+    });
+
+    // const countPromise = Category.countDocuments();
+    const countPromise = prisma.category.count();
 
     const [categorys, total] = await Promise.all([categorysPromise, countPromise]);
 
@@ -66,12 +93,24 @@ class CategoryService {
   }
 
   async getCategory(id) {
-    const category = await Category.findById(id).populate('sub_categories');
+    // const category = await Category.findById(id).populate('sub_categories');
+    const category = await prisma.category.findUnique({
+      where: {
+        id: parseInt(id)
+      },
+      include: {
+        sub_categories: true
+      }
+    });
     return category;
   }
 
   async deleteCategory(id) {
-    await Category.findByIdAndDelete(id);
+    await prisma.category.delete({
+      where: {
+        id: parseInt(id)
+      }
+    });
   }
 
 }

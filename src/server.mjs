@@ -4,7 +4,6 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { config } from './config/config.mjs';
-import { connectDB } from './db/db.mjs';
 import globalErrorHandler from './middlewares/errors/globalErrorHandler.mjs';
 import indexRouter from './routes/api/index.mjs';
 
@@ -28,5 +27,5 @@ app.listen(config.port, async () => {
 	console.log(
 		`Server is running in ${config.mode} mode at http://${config.host}:${config.port}`
 	);
-	await connectDB();
+	// await connectDB();
 });

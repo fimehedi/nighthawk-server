@@ -1,4 +1,4 @@
-import { Slider } from "../../models/slider/slider.model.mjs";
+import { prisma } from "../../db/prisma.mjs";
 import isArrayElementExist from "../../utils/isArrayElementExist.mjs";
 
 class SliderService {
@@ -12,14 +12,14 @@ class SliderService {
       });
     }
 
-    // create the slider
-    const slider = new Slider({
-      ...payload,
-      ...images,
+    const slider = await prisma.slider.create({
+      data: {
+        image: images.image || '',
+        logo: images.logo || '',
+        name: payload.title || '',
+        short_description: payload.short_description || '',
+      }
     });
-
-    await slider.save();
-
     return slider;
   }
 
@@ -32,28 +32,41 @@ class SliderService {
       });
     }
 
-    const slider = await Slider.findByIdAndUpdate
-      (id,
-        {
-          $set: { ...payload, ...images },
-        },
-        { new: true }
-      );
+
+    const slider = await prisma.slider.update({
+      where: {
+        id: parseInt(id)
+      },
+      data: {
+        name: payload.name,
+        short_description: payload.short_description,
+        ...images
+      }
+    });
     return slider;
   }
 
   async getSliders() {
-    const sliders = await Slider.find();
+    // const sliders = await Slider.find();
+    const sliders = await prisma.slider.findMany();
     return sliders;
   }
 
-  async getSlidersByPagination({ page = 1, limit = 10, order = desc }) {
-    const slidersPromise = Slider.find()
-      .sort({ createdAt: order === 'asc' ? 1 : -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
+  async getSlidersByPagination({ page = 1, limit = 10, order = 'desc' }) {
 
-    const countPromise = Slider.countDocuments();
+    const slidersPromise = await prisma.slider.findMany({
+      take: limit || 10,
+      skip: (page - 1) * limit,
+      orderBy: [
+        {
+          id: order
+        }
+      ]
+
+    });
+
+    // const countPromise = Slider.countDocuments();
+    const countPromise = prisma.slider.count();
 
     const [sliders, total] = await Promise.all([slidersPromise, countPromise]);
 
@@ -72,12 +85,21 @@ class SliderService {
   }
 
   async getSlider(id) {
-    const slider = await Slider.findById(id);
+    // const slider = await Slider.findById(id);
+    const slider = await prisma.slider.findUnique({
+      where: {
+        id: parseInt(id)
+      }
+    });
     return slider;
   }
 
   async deleteSlider(id) {
-    await Slider.findByIdAndDelete(id);
+    await prisma.slider.delete({
+      where: {
+        id: parseInt(id)
+      }
+    });
   }
 
 }
