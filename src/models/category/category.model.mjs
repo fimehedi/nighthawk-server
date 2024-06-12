@@ -12,10 +12,6 @@ const categorySchema = new Schema({
   short_description: {
     type: String,
   },
-  category: {
-    type: Schema.Types.ObjectId,
-    ref: "Category",
-  },
   sub_categories: [
     {
       type: Schema.Types.ObjectId,

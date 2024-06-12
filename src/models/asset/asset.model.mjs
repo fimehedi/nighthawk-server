@@ -14,9 +14,12 @@ const assetSchema = new Schema({
 	cover: {
 		type: String,
 	},
-	images: {
-		type: Array,
-	},
+	images: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'AssetImage',
+		},
+	],
 	sub_category: {
 		type: Schema.Types.ObjectId,
 		ref: 'SubCategory',
