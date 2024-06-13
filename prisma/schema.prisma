@@ -36,7 +36,7 @@ model SubCategory {
   image             String
   category          Category @relation(fields: [category_id], references: [id])
   category_id       Int
-  Asset             Asset[]
+  assets             Asset[]
 }
 
 model Asset {
