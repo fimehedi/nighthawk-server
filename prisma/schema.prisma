@@ -45,6 +45,7 @@ model Asset {
   cover           String
   resolution      String
   size            String
+  short_description String
   sub_category    SubCategory   @relation(fields: [sub_category_id], references: [id])
   sub_category_id Int
   AssetDetail     AssetDetail[]

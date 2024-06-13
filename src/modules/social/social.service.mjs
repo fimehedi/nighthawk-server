@@ -1,10 +1,8 @@
 import { prisma } from '../../db/prisma.mjs';
-import { Social } from '../../models/social/social.model.mjs';
 import isArrayElementExist from '../../utils/isArrayElementExist.mjs';
 
 class SocialService {
 	async createSocial(payload) {
-		const slug = payload.name.toLowerCase().split(' ').join('-');
 		const images = {};
 		if (isArrayElementExist(payload.files)) {
 			payload.files.forEach((file) => {
@@ -22,10 +20,11 @@ class SocialService {
 
 		delete payload.files;
 
-		const social = await Social.create({
-			...payload,
-			...images,
-			slug,
+		const social = await prisma.social.create({
+			data: {
+				...payload,
+				...images,
+			},
 		});
 
 		return social;
@@ -60,14 +59,14 @@ class SocialService {
 		return socials;
 	}
 
-	async getSocialsByPagination({ social = 1, limit = 10, order = 'desc' }) {
+	async getSocialsByPagination({ page = 1, limit = 10, order = 'desc' }) {
 		// const socialsPromise = Social.find()
 		// 	.sort({ createdAt: order === 'asc' ? 1 : -1 })
 		// 	.skip((social - 1) * limit)
 		// 	.limit(limit);
 
 		const socialsPromise = prisma.social.findMany({
-			skip: (social - 1) * limit,
+			skip: (page - 1) * limit,
 			take: limit,
 			orderBy: {
 				id: order === 'asc' ? 'asc' : 'desc',
@@ -80,7 +79,7 @@ class SocialService {
 		const [socials, total] = await Promise.all([socialsPromise, countPromise]);
 
 		const totalSocial = Math.ceil(total / limit);
-		const currentSocial = social;
+		const currentSocial = page;
 
 		return {
 			result: socials,
