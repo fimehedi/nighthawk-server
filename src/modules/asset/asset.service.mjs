@@ -46,6 +46,7 @@ class AssetService {
 	}
 
 	async updateAsset(id, payload) {
+		console.log('payload', payload);
 		const cover = {};
 		const images = [];
 		if (isArrayElementExist(payload.files)) {
@@ -65,9 +66,13 @@ class AssetService {
 				id: parseInt(id),
 			},
 			data: {
-				...payload,
-				...cover,
+				name: payload.name,
+				resolution: payload.resolution,
+				size: payload.size,
+				download_link: payload.download_link,
+				short_description: payload.short_description,
 				sub_category_id: parseInt(payload.sub_category_id),
+				...cover,
 			},
 		});
 
@@ -80,7 +85,7 @@ class AssetService {
 			data: assetImages,
 		});
 
-		return asset;
+		return true;
 	}
 
 	async getAssets() {
