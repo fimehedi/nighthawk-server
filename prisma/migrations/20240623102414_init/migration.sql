@@ -13,7 +13,7 @@ CREATE TABLE `Category` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `short_description` VARCHAR(191) NOT NULL,
-    `image` VARCHAR(191) NOT NULL,
+    `image` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -23,7 +23,7 @@ CREATE TABLE `SubCategory` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `short_description` VARCHAR(191) NOT NULL,
-    `image` VARCHAR(191) NOT NULL,
+    `image` VARCHAR(191) NULL,
     `category_id` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -36,7 +36,8 @@ CREATE TABLE `Asset` (
     `cover` VARCHAR(191) NOT NULL,
     `resolution` VARCHAR(191) NOT NULL,
     `size` VARCHAR(191) NOT NULL,
-    `short_description` VARCHAR(191) NOT NULL,
+    `download_link` VARCHAR(191) NULL,
+    `short_description` VARCHAR(191) NULL,
     `sub_category_id` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -58,7 +59,7 @@ CREATE TABLE `AboutUs` (
     `title` VARCHAR(191) NOT NULL,
     `cover` VARCHAR(191) NOT NULL,
     `short_description` VARCHAR(191) NOT NULL,
-    `content` VARCHAR(191) NOT NULL,
+    `content` LONGTEXT NOT NULL,
 
     UNIQUE INDEX `AboutUs_slug_key`(`slug`),
     PRIMARY KEY (`id`)
@@ -88,7 +89,7 @@ CREATE TABLE `Page` (
     `title` VARCHAR(191) NOT NULL,
     `cover` VARCHAR(191) NOT NULL,
     `short_description` VARCHAR(191) NOT NULL,
-    `content` VARCHAR(191) NOT NULL,
+    `content` LONGTEXT NOT NULL,
 
     UNIQUE INDEX `Page_slug_key`(`slug`),
     PRIMARY KEY (`id`)
