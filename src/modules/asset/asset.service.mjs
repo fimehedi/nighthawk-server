@@ -67,6 +67,7 @@ class AssetService {
 			data: {
 				...payload,
 				...cover,
+				sub_category_id: parseInt(payload.sub_category_id),
 			},
 		});
 
@@ -136,6 +137,7 @@ class AssetService {
 			},
 			include: {
 				sub_category: true,
+				images: true,
 			},
 		});
 		return asset;
