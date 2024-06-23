@@ -1,30 +1,84 @@
 import { prisma } from '../../db/prisma.mjs';
-import { Asset } from '../../models/asset/asset.model.mjs';
+import isArrayElementExist from '../../utils/isArrayElementExist.mjs';
 
 class AssetService {
 	async createAsset(payload) {
+		console.log('payload', payload);
+
+		const cover = {};
+		const images = [];
+		if (isArrayElementExist(payload.files)) {
+			payload.files.forEach((file) => {
+				if (file.fieldname === 'cover') {
+					cover[file.fieldname] = file.filename;
+				} else {
+					images.push({
+						image: file.filename,
+					});
+				}
+			});
+		}
 
 		delete payload.files;
 
+		// create asset
 		const asset = await prisma.asset.create({
 			data: {
 				...payload,
+				...cover,
 				sub_category_id: parseInt(payload.sub_category_id),
-				cover: 'cover.jpg',
-			}
+			},
+		});
+
+		// create asset images
+		const assetImages = images.map((image) => ({
+			image: image.image,
+			asset_id: asset.id,
+		}));
+
+		console.log('assetImages', assetImages);
+
+		await prisma.assetImage.createMany({
+			data: assetImages,
 		});
 
 		return asset;
 	}
 
 	async updateAsset(id, payload) {
-		const asset = await Asset.findByIdAndUpdate(
-			id,
-			{
-				$set: payload,
+		const cover = {};
+		const images = [];
+		if (isArrayElementExist(payload.files)) {
+			payload.files.forEach((file) => {
+				if (file.fieldname === 'cover') {
+					cover[file.fieldname] = file.filename;
+				} else {
+					images.push({
+						image: file.filename,
+					});
+				}
+			});
+		}
+
+		await prisma.asset.update({
+			where: {
+				id: parseInt(id),
 			},
-			{ new: true }
-		);
+			data: {
+				...payload,
+				...cover,
+			},
+		});
+
+		const assetImages = images.map((image) => ({
+			image: image.image,
+			asset_id: parseInt(id),
+		}));
+
+		await prisma.assetImage.createMany({
+			data: assetImages,
+		});
+
 		return asset;
 	}
 
@@ -47,6 +101,7 @@ class AssetService {
 		const assetsPromise = prisma.asset.findMany({
 			include: {
 				sub_category: true,
+				images: true,
 			},
 			skip: (page - 1) * limit,
 			take: limit,

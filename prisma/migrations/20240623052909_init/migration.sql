@@ -2,6 +2,7 @@
 CREATE TABLE `User` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `email_UNIQUE`(`email`),
     PRIMARY KEY (`id`)
@@ -35,13 +36,14 @@ CREATE TABLE `Asset` (
     `cover` VARCHAR(191) NOT NULL,
     `resolution` VARCHAR(191) NOT NULL,
     `size` VARCHAR(191) NOT NULL,
+    `short_description` VARCHAR(191) NOT NULL,
     `sub_category_id` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `AssetDetail` (
+CREATE TABLE `AssetImage` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `image` VARCHAR(191) NOT NULL,
     `asset_id` INTEGER NOT NULL,
@@ -121,4 +123,4 @@ ALTER TABLE `SubCategory` ADD CONSTRAINT `SubCategory_category_id_fkey` FOREIGN 
 ALTER TABLE `Asset` ADD CONSTRAINT `Asset_sub_category_id_fkey` FOREIGN KEY (`sub_category_id`) REFERENCES `SubCategory`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `AssetDetail` ADD CONSTRAINT `AssetDetail_asset_id_fkey` FOREIGN KEY (`asset_id`) REFERENCES `Asset`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `AssetImage` ADD CONSTRAINT `AssetImage_asset_id_fkey` FOREIGN KEY (`asset_id`) REFERENCES `Asset`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

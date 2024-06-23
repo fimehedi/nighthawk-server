@@ -25,7 +25,7 @@ model Category {
   id                Int           @id @default(autoincrement())
   name              String
   short_description String
-  image             String
+  image             String?
   sub_categories    SubCategory[]
 }
 
@@ -33,7 +33,7 @@ model SubCategory {
   id                Int      @id @default(autoincrement())
   name              String
   short_description String
-  image             String
+  image             String?
   category          Category @relation(fields: [category_id], references: [id])
   category_id       Int
   assets             Asset[]
@@ -45,13 +45,13 @@ model Asset {
   cover           String
   resolution      String
   size            String
-  short_description String
+  short_description String?
   sub_category    SubCategory   @relation(fields: [sub_category_id], references: [id])
   sub_category_id Int
-  AssetDetail     AssetDetail[]
+  images     AssetImage[]
 }
 
-model AssetDetail {
+model AssetImage {
   id       Int    @id @default(autoincrement())
   image    String
   asset_id Int
