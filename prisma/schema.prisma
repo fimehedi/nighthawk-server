@@ -34,7 +34,7 @@ model SubCategory {
   name              String
   short_description String
   image             String?
-  category          Category @relation(fields: [category_id], references: [id])
+  category          Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
   category_id       Int
   assets            Asset[]
 }
@@ -47,7 +47,7 @@ model Asset {
   size              String
   download_link     String?
   short_description String?
-  sub_category      SubCategory  @relation(fields: [sub_category_id], references: [id])
+  sub_category      SubCategory  @relation(fields: [sub_category_id], references: [id], onDelete: Cascade)
   sub_category_id   Int
   images            AssetImage[]
 }
@@ -56,7 +56,7 @@ model AssetImage {
   id       Int    @id @default(autoincrement())
   image    String
   asset_id Int
-  asset    Asset  @relation(fields: [asset_id], references: [id])
+  asset    Asset  @relation(fields: [asset_id], references: [id], onDelete: Cascade)
 }
 
 model AboutUs {
