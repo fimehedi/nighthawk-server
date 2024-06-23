@@ -4,18 +4,33 @@ import assetService from './asset.service.mjs';
 
 class AssetController {
 	createAsset = catchError(async (req, res, next) => {
-		const asset = await assetService.createAsset(
-			{
-				...req.body,
-				files: req.files
-			}
-		);
+		const asset = await assetService.createAsset({
+			...req.body,
+			files: req.files,
+		});
 		const resDoc = responseHandler(201, 'Asset created successfully', asset);
 		res.status(201).json(resDoc);
 	});
 
 	updateAsset = catchError(async (req, res, next) => {
-		const asset = await assetService.updateAsset(req.params.id, req.body);
+		const {
+			name,
+			resolution,
+			size,
+			download_link,
+			short_description,
+			sub_category_id,
+		} = req.body;
+
+		const asset = await assetService.updateAsset(req.params.id, {
+			name,
+			resolution,
+			size,
+			download_link,
+			short_description,
+			sub_category_id,
+			files: req.files,
+		});
 		const resDoc = responseHandler(200, 'Asset updated successfully', asset);
 		res.status(200).json(resDoc);
 	});

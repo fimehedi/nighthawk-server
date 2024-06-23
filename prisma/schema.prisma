@@ -5,13 +5,13 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.0.x"]
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
@@ -36,20 +36,20 @@ model SubCategory {
   image             String?
   category          Category @relation(fields: [category_id], references: [id])
   category_id       Int
-  assets             Asset[]
+  assets            Asset[]
 }
 
 model Asset {
-  id              Int           @id @default(autoincrement())
-  name            String
-  cover           String
-  resolution      String
-  size            String
-  download_link   String?
+  id                Int          @id @default(autoincrement())
+  name              String
+  cover             String
+  resolution        String
+  size              String
+  download_link     String?
   short_description String?
-  sub_category    SubCategory   @relation(fields: [sub_category_id], references: [id])
-  sub_category_id Int
-  images     AssetImage[]
+  sub_category      SubCategory  @relation(fields: [sub_category_id], references: [id])
+  sub_category_id   Int
+  images            AssetImage[]
 }
 
 model AssetImage {
