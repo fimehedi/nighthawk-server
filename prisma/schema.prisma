@@ -45,7 +45,7 @@ model Asset {
   cover           String
   resolution      String
   size            String
-  download_link   String
+  download_link   String?
   short_description String?
   sub_category    SubCategory   @relation(fields: [sub_category_id], references: [id])
   sub_category_id Int
@@ -65,7 +65,7 @@ model AboutUs {
   title             String
   cover             String
   short_description String
-  content           String
+  content           String @db.LongText
 }
 
 model Setting {
@@ -87,7 +87,7 @@ model Page {
   title             String
   cover             String
   short_description String
-  content           String
+  content           String @db.LongText
 }
 
 model Slider {
