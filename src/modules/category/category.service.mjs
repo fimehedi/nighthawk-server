@@ -1,118 +1,119 @@
-import { prisma } from "../../db/prisma.mjs";
-import isArrayElementExist from "../../utils/isArrayElementExist.mjs";
+import { prisma } from '../../db/prisma.mjs';
+import isArrayElementExist from '../../utils/isArrayElementExist.mjs';
 
 class CategoryService {
+	async createCategory(payload) {
+		const images = {};
+		if (isArrayElementExist(payload.files)) {
+			payload.files.forEach((file) => {
+				images[file.fieldname] = file.filename;
+			});
+		}
 
-  async createCategory(payload) {
+		delete payload.files;
 
-    const images = {};
-    if (isArrayElementExist(payload.files)) {
-      payload.files.forEach((file) => {
-        images[file.fieldname] = file.filename;
-      });
-    }
+		// create the category
+		const category = await prisma.category.create({
+			data: { ...payload, ...images },
+		});
+		return category;
+	}
 
-    delete payload.files;
+	async updateCategory(id, payload) {
+		const images = {};
+		if (isArrayElementExist(payload.files)) {
+			payload.files.forEach((file) => {
+				images[file.fieldname] = file.filename;
+			});
+		}
 
-    // create the category
-    const category = await prisma.category.create({
-      data: { ...payload, ...images }
-    });
-    return category;
-  }
+		delete payload.files;
+		const category = await prisma.category.update({
+			where: {
+				id: parseInt(id),
+			},
+			data: {
+				...payload,
+				...images,
+			},
+		});
+		return category;
+	}
 
-  async updateCategory(id, payload) {
+	async getCategorys() {
+		// const categorys = await Category.find();
+		const categorys = await prisma.category.findMany({
+			include: {
+				sub_categories: {
+					include: {
+						assets: true,
+					},
+				},
+			},
+		});
+		return categorys;
+	}
 
-    const images = {};
-    if (isArrayElementExist(payload.files)) {
-      payload.files.forEach((file) => {
-        images[file.fieldname] = file.filename;
-      });
-    }
+	async getCategorysByPagination({ page = 1, limit = 10, order = 'desc' }) {
+		// const categorysPromise = Category.find()
+		//   .sort({ createdAt: order === 'asc' ? 1 : -1 })
+		//   .skip((page - 1) * limit)
+		//   .limit(limit);
 
-    delete payload.files;
-    const category = await prisma.category.update({
-      where: {
-        id: parseInt(id)
-      },
-      data: {
-        ...payload,
-        ...images
-      }
-    });
-    return category;
-  }
+		const categorysPromise = prisma.category.findMany({
+			take: limit || 10,
+			skip: (page - 1) * limit,
+			orderBy: [
+				{
+					id: order,
+				},
+			],
+			include: {
+				sub_categories: true,
+			},
+		});
 
-  async getCategorys() {
-    // const categorys = await Category.find();
-    const categorys = await prisma.category.findMany(
-      {
-        include: {
-          sub_categories: true
-        }
-      }
-    );
-    return categorys;
-  }
+		// const countPromise = Category.countDocuments();
+		const countPromise = prisma.category.count();
 
-  async getCategorysByPagination({ page = 1, limit = 10, order = 'desc' }) {
-    // const categorysPromise = Category.find()
-    //   .sort({ createdAt: order === 'asc' ? 1 : -1 })
-    //   .skip((page - 1) * limit)
-    //   .limit(limit);
+		const [categorys, total] = await Promise.all([
+			categorysPromise,
+			countPromise,
+		]);
 
-    const categorysPromise = prisma.category.findMany({
-      take: limit || 10,
-      skip: (page - 1) * limit,
-      orderBy: [
-        {
-          id: order
-        }
-      ],
-      include: {
-        sub_categories: true
-      }
-    });
+		const totalPage = Math.ceil(total / limit);
+		const currentPage = page;
 
-    // const countPromise = Category.countDocuments();
-    const countPromise = prisma.category.count();
+		return {
+			result: categorys,
+			pagination: {
+				total,
+				totalPage,
+				currentPage,
+			},
+		};
+	}
 
-    const [categorys, total] = await Promise.all([categorysPromise, countPromise]);
+	async getCategory(id) {
+		// const category = await Category.findById(id).populate('sub_categories');
+		const category = await prisma.category.findUnique({
+			where: {
+				id: parseInt(id),
+			},
+			include: {
+				sub_categories: true,
+			},
+		});
+		return category;
+	}
 
-    const totalPage = Math.ceil(total / limit);
-    const currentPage = page;
-
-    return {
-      result: categorys,
-      pagination: {
-        total,
-        totalPage,
-        currentPage,
-      }
-    };
-  }
-
-  async getCategory(id) {
-    // const category = await Category.findById(id).populate('sub_categories');
-    const category = await prisma.category.findUnique({
-      where: {
-        id: parseInt(id)
-      },
-      include: {
-        sub_categories: true
-      }
-    });
-    return category;
-  }
-
-  async deleteCategory(id) {
-    await prisma.category.delete({
-      where: {
-        id: parseInt(id)
-      }
-    });
-  }
-
+	async deleteCategory(id) {
+		await prisma.category.delete({
+			where: {
+				id: parseInt(id),
+			},
+		});
+	}
 }
 
 export default new CategoryService();
