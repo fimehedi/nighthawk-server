@@ -46,10 +46,13 @@ class CategoryService {
 			include: {
 				sub_categories: {
 					include: {
-						assets: true,
+						assets: true, 
 					},
 				},
 			},
+			orderBy: {
+				id: 'desc',
+			}
 		});
 		return categorys;
 	}

@@ -94,6 +94,9 @@ class AssetService {
 			include: {
 				sub_category: true,
 			},
+			orderBy: {
+				id: 'desc',
+			},
 		});
 		return assets;
 	}
