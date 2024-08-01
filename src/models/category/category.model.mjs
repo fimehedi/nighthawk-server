@@ -21,7 +21,18 @@ const categorySchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "SubCategory",
     }
-  ]
+  ],
+
+  metaTitle: {
+    type: String,
+    
+  },
+
+  metaDescription: {
+    type: String,
+    
+  },
+
 });
 
 export const Category = model("Category", categorySchema);
