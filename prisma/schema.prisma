@@ -27,8 +27,8 @@ model Category {
   short_description String
   image             String?
   sub_categories    SubCategory[]
-  meta_title         String?
-  meta_description   String @db.LongText
+  meta_title        String?
+  meta_description  String? @db.LongText
 
 }
 
@@ -40,8 +40,8 @@ model SubCategory {
   category          Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
   category_id       Int
   assets            Asset[]
-  meta_title         String?
-  meta_description   String @db.LongText
+  meta_title        String?
+  meta_description  String? @db.LongText
 }
 
 model Asset {
@@ -55,8 +55,8 @@ model Asset {
   sub_category      SubCategory  @relation(fields: [sub_category_id], references: [id], onDelete: Cascade)
   sub_category_id   Int
   images            AssetImage[]
-  meta_title         String?
-  meta_description   String @db.LongText
+  meta_title        String?
+  meta_description  String? @db.LongText
 }
 
 model AssetImage {
