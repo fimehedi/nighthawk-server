@@ -72,6 +72,8 @@ class AssetService {
 				download_link: payload.download_link,
 				short_description: payload.short_description,
 				sub_category_id: parseInt(payload.sub_category_id),
+				meta_title: payload.meta_title,
+				meta_description: payload.meta_description,
 				...cover,
 			},
 		});

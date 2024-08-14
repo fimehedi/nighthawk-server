@@ -20,6 +20,9 @@ class AssetController {
 			download_link,
 			short_description,
 			sub_category_id,
+			meta_title,
+			meta_description,
+          
 		} = req.body;
 
 		const asset = await assetService.updateAsset(req.params.id, {
@@ -29,6 +32,9 @@ class AssetController {
 			download_link,
 			short_description,
 			sub_category_id,
+			meta_title,
+			meta_description,
+			
 			files: req.files,
 		});
 		const resDoc = responseHandler(200, 'Asset updated successfully', asset);
