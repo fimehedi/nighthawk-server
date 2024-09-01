@@ -103,10 +103,18 @@ class CategoryService {
 			where: {
 				id: parseInt(id),
 			},
+			// include: {
+			// 	sub_categories: true,
+			// },
 			include: {
-				sub_categories: true,
+				sub_categories: {
+					include: {
+						assets: true, 
+					},
+				},
 			},
 		});
+		
 		return category;
 	}
 
