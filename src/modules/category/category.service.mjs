@@ -97,26 +97,65 @@ class CategoryService {
 		};
 	}
 
-	async getCategory(id) {
-		// const category = await Category.findById(id).populate('sub_categories');
-		const category = await prisma.category.findUnique({
-			where: {
-				id: parseInt(id),
-			},
-			// include: {
-			// 	sub_categories: true,
-			// },
-			include: {
-				sub_categories: {
-					include: {
-						assets: true, 
-					},
-				},
-			},
-		});
+	// async getCategory(id) {
+	// 	// const category = await Category.findById(id).populate('sub_categories');
+	// 	const category = await prisma.category.findUnique({
+	// 		where: {
+	// 			id: parseInt(id),
+	// 		},
+	// 		// include: {
+	// 		// 	sub_categories: true,
+	// 		// },
+	// 		include: {
+	// 			sub_categories: {
+	// 				include: {
+	// 					assets: true, 
+	// 				},
+	// 			},
+	// 		},
+	// 	});
 		
+	// 	return category;
+	// }
+
+
+	async getCategory(id) {
+		const category = await prisma.category.findUnique({
+		  where: {
+			id: parseInt(id),
+		  },
+		  include: {
+			sub_categories: {
+			  include: {
+				assets: {
+				  include: {
+					sub_category: {
+					  select: {
+						id: true,
+						name: true,
+						category: {
+						  select: {
+							id: true,
+							name: true,
+						  },
+						},
+					  },
+					},
+				  },
+				},
+			  },
+			},
+		  },
+		});
+	  
 		return category;
-	}
+	  }
+	  
+
+
+
+
+	
 
 	async deleteCategory(id) {
 		await prisma.category.delete({
