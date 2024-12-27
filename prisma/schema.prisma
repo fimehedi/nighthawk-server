@@ -16,9 +16,11 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique(map: "email_UNIQUE")
-  password String
+  id         Int      @id @default(autoincrement())
+  email      String   @unique(map: "email_UNIQUE")
+  password   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Category {
@@ -28,8 +30,9 @@ model Category {
   image             String?
   sub_categories    SubCategory[]
   meta_title        String?
-  meta_description  String? @db.LongText
-
+  meta_description  String?       @db.LongText
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
 }
 
 model SubCategory {
@@ -41,7 +44,9 @@ model SubCategory {
   category_id       Int
   assets            Asset[]
   meta_title        String?
-  meta_description  String? @db.LongText
+  meta_description  String?  @db.LongText
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
 }
 
 model Asset {
@@ -56,59 +61,113 @@ model Asset {
   sub_category_id   Int
   images            AssetImage[]
   meta_title        String?
-  meta_description  String? @db.LongText
+  meta_description  String?      @db.LongText
+  created_at        DateTime     @default(now())
+  updated_at        DateTime     @updatedAt
 }
 
 model AssetImage {
-  id       Int    @id @default(autoincrement())
-  image    String
-  asset_id Int
-  asset    Asset  @relation(fields: [asset_id], references: [id], onDelete: Cascade)
+  id         Int      @id @default(autoincrement())
+  image      String
+  asset_id   Int
+  asset      Asset    @relation(fields: [asset_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model AboutUs {
-  id                Int    @id @default(autoincrement())
-  slug              String @unique
+  id                Int      @id @default(autoincrement())
+  slug              String   @unique
   title             String
   cover             String
   short_description String
-  content           String @db.LongText
+  content           String   @db.LongText
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
 }
 
 model Setting {
-  id               Int    @id @default(autoincrement())
-  slug             String @unique
+  id               Int      @id @default(autoincrement())
+  slug             String   @unique
   site_name        String
-  site_description String @db.LongText
+  site_description String   @db.LongText
   site_logo        String
   site_favicon     String
   site_email       String
   site_phone       String
   site_address     String
   site_footer      String
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
 }
 
 model Page {
-  id                Int    @id @default(autoincrement())
-  slug              String @unique
+  id                Int      @id @default(autoincrement())
+  slug              String   @unique
   title             String
   cover             String
   short_description String
-  content           String @db.LongText
+  content           String   @db.LongText
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
 }
 
 model Slider {
-  id                Int    @id @default(autoincrement())
+  id                Int      @id @default(autoincrement())
   name              String
   logo              String
   short_description String
   image             String
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
 }
 
 model Social {
-  id    Int    @id @default(autoincrement())
-  name  String
-  url   String
-  icon  String
-  order Int    @default(0)
+  id         Int      @id @default(autoincrement())
+  name       String
+  url        String
+  icon       String
+  order      Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model InnovativeFurnitures {
+  id                Int      @id @default(autoincrement())
+  title             String
+  short_description String
+  urlOne            String
+  urlTwo            String
+  urlThree          String
+  urlFour           String
+  bgImg             String
+  order             Int      @default(0)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+}
+
+model SupportedBy {
+  id                Int      @id @default(autoincrement())
+  title             String
+  short_description String
+  imageOne          String
+  imageTwo          String
+  imageThree        String
+  imageFour         String
+  imageFive         String
+  order             Int      @default(0)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+}
+
+model Blog {
+  id                Int      @id @default(autoincrement())
+  title             String
+  name              String
+  short_description String
+  image             String
+  bgImage           String
+  order             Int      @default(0)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
 }

@@ -8,6 +8,8 @@ import pageRouter from './page.route.mjs';
 import sliderRouter from './slider.route.mjs';
 import socialRouter from './social.route.mjs';
 import subcategoryRouter from './sub.category.route.mjs';
+import innovativeFurnituresRouter from './innovative.furnitures.route.mjs';
+import supportedByRouter from './supported.by.route.mjs';
 
 const indexRouter = Router();
 
@@ -29,5 +31,10 @@ indexRouter.use('/assets', assetRouter);
 indexRouter.use('/pages', pageRouter);
 indexRouter.use('/general', generalRouter);
 indexRouter.use('/social', socialRouter);
+indexRouter.use('/innovative', innovativeFurnituresRouter);
+indexRouter.use('/supportedBy', supportedByRouter);
+
+
+
 
 export default indexRouter;
