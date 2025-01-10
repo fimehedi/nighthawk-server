@@ -4,55 +4,72 @@ import isArrayElementExist from "../../utils/isArrayElementExist.mjs";
 class InnovativeFurnituresService {
 
   async createInnovative(payload) {
-
     const images = {};
     if (isArrayElementExist(payload.files)) {
       payload.files.forEach((file) => {
-        images[file.fieldname] = file.filename;
+        images[file.fieldname] = file.filename; 
       });
     }
 
-    const innovative = await prisma.innovativeFurnitures.create({
+    // Construct data object for Prisma
+    const { title, short_description, urlOne, urlTwo, urlThree, urlFour } = payload;
+
+    const innovativeFurniture = await prisma.innovativeFurnitures.create({
       data: {
-        ...payload,
-        bgImg: images.bgImg || '',
-      }
+        title,
+        short_description,
+        urlOne,
+        urlTwo,
+        urlThree,
+        urlFour,
+        bgImg: images.bgImg || '', 
+      },
     });
-    return innovative;
+
+    return innovativeFurniture;
   }
+
 
   async updateInnovative(id, payload) {
-
+    // Handle files
     const images = {};
     if (isArrayElementExist(payload.files)) {
       payload.files.forEach((file) => {
-        images[file.fieldname] = file.filename;
+        images[file.fieldname] = file.filename; // Map file fieldnames to filenames
       });
     }
 
+    // Construct data object for Prisma
+    const { title, short_description, urlOne, urlTwo, urlThree, urlFour } = payload;
 
-    const slider = await prisma.slider.update({
+    const updatedInnovativeFurniture = await prisma.innovativeFurnitures.update({
       where: {
-        id: parseInt(id)
+        id: parseInt(id), // Ensure the ID is an integer
       },
       data: {
-        name: payload.name,
-        short_description: payload.short_description,
-        ...images
-      }
+        title,
+        short_description,
+        urlOne,
+        urlTwo,
+        urlThree,
+        urlFour,
+        ...(images.bgImg && { bgImg: images.bgImg }), // Only include bgImg if it exists
+      },
     });
-    return slider;
+
+    return updatedInnovativeFurniture;
   }
 
+
   async getInnovative() {
-    // const sliders = await Slider.find();
-    const sliders = await prisma.slider.findMany();
-    return sliders;
+    // const innovativeFurnitures = await innovativeFurnitures.find();
+    const innovativeFurnitures = await prisma.innovativeFurnitures.findMany();
+    return innovativeFurnitures;
   }
 
   async getInnovativesByPagination({ page = 1, limit = 10, order = 'desc' }) {
 
-    const slidersPromise = await prisma.slider.findMany({
+    const innovativeFurnituresPromise = await prisma.innovativeFurnitures.findMany({
       take: limit || 10,
       skip: (page - 1) * limit,
       orderBy: [
@@ -63,16 +80,16 @@ class InnovativeFurnituresService {
 
     });
 
-    // const countPromise = Slider.countDocuments();
-    const countPromise = prisma.slider.count();
+    // const countPromise = innovativeFurnitures.countDocuments();
+    const countPromise = prisma.innovativeFurnitures.count();
 
-    const [sliders, total] = await Promise.all([slidersPromise, countPromise]);
+    const [innovativeFurnitures, total] = await Promise.all([innovativeFurnituresPromise, countPromise]);
 
     const totalPage = Math.ceil(total / limit);
     const currentPage = page;
 
     return {
-      result: sliders,
+      result: innovativeFurnitures,
       pagination: {
         total,
         totalPage,
@@ -83,17 +100,17 @@ class InnovativeFurnituresService {
   }
 
   async getInnovativeById(id) {
-    // const slider = await Slider.findById(id);
-    const slider = await prisma.slider.findUnique({
+    // const innovativeFurnitures = await innovativeFurnitures.findById(id);
+    const innovativeFurnitures = await prisma.innovativeFurnitures.findUnique({
       where: {
         id: parseInt(id)
       }
     });
-    return slider;
+    return innovativeFurnitures;
   }
 
   async deleteInnovative(id) {
-    await prisma.slider.delete({
+    await prisma.innovativeFurnitures.delete({
       where: {
         id: parseInt(id)
       }

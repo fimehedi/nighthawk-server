@@ -1,20 +1,20 @@
 import { Router } from "express";
 import upload from "../../middlewares/uploads/upload.mjs";
-import sliderController from "../../modules/slider/slider.controller.mjs";
+import supportedByController from "../../modules/supportedBy/supportedBy.controller.mjs";
 
-const supportedBy = Router();
+const supportedByRouter = Router();
 
-supportedBy
+supportedByRouter
   .route("/")
-  .post(upload.any(), sliderController.createSlider)
-  .get(sliderController.getSliders);
+  .post(upload.any(), supportedByController.createSupportedBy)
+  .get(supportedByController.getSupportedBy);
 
-  supportedBy.get("/pages", sliderController.getSlidersByPagination);
+  supportedByRouter.get("/pages", supportedByController.getSupportedByByPagination);
 
-  supportedBy
+  supportedByRouter
   .route("/:id")
-  .get(sliderController.getSlider)
-  .put(upload.any(), sliderController.updateSlider)
-  .delete(sliderController.deleteSlider);
+  .get(supportedByController.getSupportedByById)
+  .put(upload.any(), supportedByController.updateSupportedBy)
+  .delete(supportedByController.deleteSupportedBy);
 
 export default supportedByRouter;

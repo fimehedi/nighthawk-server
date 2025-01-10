@@ -4,20 +4,42 @@ import innovativeFurnituresService from "./innovative.furnitures.service.mjs";
 
 class InnovativeFurnituresController {
   createInnovative = catchError(async (req, res, next) => {
+   
+    const { title, short_description, urlOne, urlTwo, urlThree, urlFour } = req.body;
+
+    const files = req.files;
+
     const innovativeFurnitures = await innovativeFurnituresService.createInnovative({
-        ...req.body,
-        files: req.files,
+      title,
+      short_description,
+      urlOne,
+      urlTwo,
+      urlThree,
+      urlFour,
+      files, 
     });
-    const resDoc = responseHandler(201, " Innovative Furnitures created successfully", innovativeFurnitures);
+    const resDoc = responseHandler(201, "Innovative Furniture created successfully", innovativeFurnitures);
     res.status(201).json(resDoc);
   });
 
-  updateInnovative  = catchError(async (req, res, next) => {
-    const innovativeFurnitures = await innovativeFurnituresService.updateInnovative(req.params.id, {
-      ...req.body,
-      files: req.files,
+
+  updateInnovative = catchError(async (req, res, next) => {
+    const { id } = req.params;
+    const { title, short_description, urlOne, urlTwo, urlThree, urlFour } = req.body;
+    const files = req.files;
+
+    const updatedInnovativeFurniture = await innovativeFurnituresService.updateInnovative(id, {
+      title,
+      short_description,
+      urlOne,
+      urlTwo,
+      urlThree,
+      urlFour,
+      files, 
     });
-    const resDoc = responseHandler(200, "Innovative updated successfully", innovativeFurnitures);
+
+    // Send response
+    const resDoc = responseHandler(200, "Innovative Furniture updated successfully", updatedInnovativeFurniture);
     res.status(200).json(resDoc);
   });
 

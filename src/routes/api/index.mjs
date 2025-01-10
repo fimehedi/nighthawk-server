@@ -10,6 +10,7 @@ import socialRouter from './social.route.mjs';
 import subcategoryRouter from './sub.category.route.mjs';
 import innovativeFurnituresRouter from './innovative.furnitures.route.mjs';
 import supportedByRouter from './supported.by.route.mjs';
+import blogsRouter from './blog.route.mjs';
 
 const indexRouter = Router();
 
@@ -33,6 +34,8 @@ indexRouter.use('/general', generalRouter);
 indexRouter.use('/social', socialRouter);
 indexRouter.use('/innovative', innovativeFurnituresRouter);
 indexRouter.use('/supportedBy', supportedByRouter);
+indexRouter.use('/blogs', blogsRouter);
+
 
 
 
