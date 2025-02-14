@@ -12,12 +12,13 @@ class BlogService {
     }
 
     // Construct data object for Prisma
-    const { title, name, short_description } = payload;
+    const { title, name, short_description  , back_link} = payload;
 
     const blog = await prisma.blog.create({
       data: {
         title,
         short_description,
+        back_link,
         name,
         image:images.image || '', 
         bgImage: images.bgImage || '', 
@@ -38,7 +39,7 @@ class BlogService {
     }
 
     // Construct data object for Prisma
-    const { title, name, short_description } = payload;
+    const { title, name, short_description , back_link} = payload;
 
     const blog = await prisma.blog.update({
         where: {
@@ -48,6 +49,7 @@ class BlogService {
           title,
           name,
           short_description,
+          back_link,
           ...(images.image && { image: images.image }), // Only include image if it exists
           ...(images.bgImage && { bgImage: images.bgImage }), // Only include bgImage if it exists
         },

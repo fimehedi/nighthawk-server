@@ -167,6 +167,7 @@ model Blog {
   short_description String
   image             String
   bgImage           String
+  back_link         String
   order             Int      @default(0)
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
