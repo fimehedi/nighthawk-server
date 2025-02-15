@@ -164,7 +164,7 @@ model Blog {
   id                Int      @id @default(autoincrement())
   title             String
   name              String
-  short_description String
+  short_description String @db.LongText
   image             String
   bgImage           String
   back_link         String
