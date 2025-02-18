@@ -20,7 +20,7 @@ model User {
   email      String   @unique(map: "email_UNIQUE")
   password   String
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @updatedAt @default(now())
 }
 
 model Category {
@@ -32,7 +32,7 @@ model Category {
   meta_title        String?
   meta_description  String?       @db.LongText
   created_at        DateTime      @default(now())
-  updated_at        DateTime      @updatedAt
+  updated_at        DateTime      @updatedAt @default(now())
 }
 
 model SubCategory {
@@ -46,7 +46,7 @@ model SubCategory {
   meta_title        String?
   meta_description  String?  @db.LongText
   created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  updated_at        DateTime @updatedAt @default(now())
 }
 
 model Asset {
@@ -63,7 +63,7 @@ model Asset {
   meta_title        String?
   meta_description  String?      @db.LongText
   created_at        DateTime     @default(now())
-  updated_at        DateTime     @updatedAt
+  updated_at        DateTime     @updatedAt @default(now())
 }
 
 model AssetImage {
@@ -72,7 +72,7 @@ model AssetImage {
   asset_id   Int
   asset      Asset    @relation(fields: [asset_id], references: [id], onDelete: Cascade)
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @updatedAt @default(now())
 }
 
 model AboutUs {
@@ -83,7 +83,7 @@ model AboutUs {
   short_description String
   content           String   @db.LongText
   created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  updated_at        DateTime @updatedAt @default(now())
 }
 
 model Setting {
@@ -98,7 +98,7 @@ model Setting {
   site_address     String
   site_footer      String
   created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
+  updated_at       DateTime @updatedAt @default(now())
 }
 
 model Page {
@@ -109,7 +109,7 @@ model Page {
   short_description String
   content           String   @db.LongText
   created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  updated_at        DateTime @updatedAt @default(now())
 }
 
 model Slider {
@@ -119,7 +119,7 @@ model Slider {
   short_description String
   image             String
   created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  updated_at        DateTime @updatedAt @default(now())
 }
 
 model Social {
@@ -129,7 +129,7 @@ model Social {
   icon       String
   order      Int      @default(0)
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @updatedAt @default(now())
 }
 
 model InnovativeFurnitures {
@@ -143,7 +143,7 @@ model InnovativeFurnitures {
   bgImg             String
   order             Int      @default(0)
   created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  updated_at        DateTime @updatedAt @default(now())
 }
 
 model SupportedBy {
@@ -157,7 +157,7 @@ model SupportedBy {
   imageFive         String
   order             Int      @default(0)
   created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  updated_at        DateTime @updatedAt @default(now())
 }
 
 model Blog {
@@ -170,5 +170,5 @@ model Blog {
   back_link         String
   order             Int      @default(0)
   created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  updated_at        DateTime @updatedAt @default(now())
 }
