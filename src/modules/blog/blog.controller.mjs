@@ -5,7 +5,8 @@ import blogService from "./blog.service.mjs";
 class BlogsController {
     createBlog = catchError(async (req, res, next) => {
 
-        const { title, name, short_description, back_link } = req.body;
+        const { title, name, short_description, paragraph_one,
+            paragraph_two,paragraph_three, back_link } = req.body;
 
         const files = req.files;
 
@@ -13,6 +14,9 @@ class BlogsController {
             title,
             name,
             short_description,
+            paragraph_one,
+            paragraph_two,
+            paragraph_three,
             back_link,
             files,
         });
@@ -23,13 +27,18 @@ class BlogsController {
 
     updateBlog = catchError(async (req, res, next) => {
         const { id } = req.params;
-        const { title, name, short_description, back_link } = req.body;
+        const { title, name, short_description,  paragraph_one,
+            paragraph_two,
+            paragraph_three, back_link } = req.body;
         const files = req.files;
 
         const blog = await blogService.updateBlog(id, {
             title,
             name,
             short_description,
+            paragraph_one,
+            paragraph_two,
+            paragraph_three,
             back_link,
             files,
         });

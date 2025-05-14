@@ -7,21 +7,26 @@ class BlogService {
     const images = {};
     if (isArrayElementExist(payload.files)) {
       payload.files.forEach((file) => {
-        images[file.fieldname] = file.filename; 
+        images[file.fieldname] = file.filename;
       });
     }
 
     // Construct data object for Prisma
-    const { title, name, short_description  , back_link} = payload;
+    const { title, name, short_description, paragraph_one,
+      paragraph_two,
+      paragraph_three, back_link } = payload;
 
     const blog = await prisma.blog.create({
       data: {
         title,
         short_description,
+        paragraph_one,
+        paragraph_two,
+        paragraph_three,
         back_link,
         name,
-        image:images.image || '', 
-        bgImage: images.bgImage || '', 
+        image: images.image || '',
+        bgImage: images.bgImage || '',
       },
     });
 
@@ -39,22 +44,27 @@ class BlogService {
     }
 
     // Construct data object for Prisma
-    const { title, name, short_description , back_link} = payload;
+    const { title, name, short_description, paragraph_one,
+      paragraph_two,
+      paragraph_three, back_link } = payload;
 
     const blog = await prisma.blog.update({
-        where: {
-          id: parseInt(id), // Ensure the ID is an integer
-        },
-        data: {
-          title,
-          name,
-          short_description,
-          back_link,
-          ...(images.image && { image: images.image }), // Only include image if it exists
-          ...(images.bgImage && { bgImage: images.bgImage }), // Only include bgImage if it exists
-        },
-      });
-    
+      where: {
+        id: parseInt(id), // Ensure the ID is an integer
+      },
+      data: {
+        title,
+        name,
+        short_description,
+        paragraph_one,
+        paragraph_two,
+        paragraph_three,
+        back_link,
+        ...(images.image && { image: images.image }), // Only include image if it exists
+        ...(images.bgImage && { bgImage: images.bgImage }), // Only include bgImage if it exists
+      },
+    });
+
     return blog;
   }
 
