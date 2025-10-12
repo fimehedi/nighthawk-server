@@ -175,3 +175,11 @@ model Blog {
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 }
+
+
+model Gallery {
+  id         Int      @id @default(autoincrement())
+  image      String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
