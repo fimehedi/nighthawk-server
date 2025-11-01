@@ -12,6 +12,8 @@ import innovativeFurnituresRouter from './innovative.furnitures.route.mjs';
 import supportedByRouter from './supported.by.route.mjs';
 import blogsRouter from './blog.route.mjs';
 import galleyRouter from './gallery.route.mjs';
+import patreonRouter from './patreon.route.mjs';
+import protectedRouter from './protected.route.mjs';
 
 const indexRouter = Router();
 
@@ -36,7 +38,9 @@ indexRouter.use('/social', socialRouter);
 indexRouter.use('/innovative', innovativeFurnituresRouter);
 indexRouter.use('/supportedBy', supportedByRouter);
 indexRouter.use('/blogs', blogsRouter);
-indexRouter.use('/gallery', galleyRouter)
+indexRouter.use('/gallery', galleyRouter);
+indexRouter.use('/patreon', patreonRouter);
+indexRouter.use('/protected', protectedRouter);
 
 
 

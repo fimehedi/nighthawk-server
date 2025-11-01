@@ -9,6 +9,11 @@ const {
 	DEV_DB_URI,
 	PROD_DB_URI,
 	JWT_SECRET,
+	PATREON_CLIENT_ID,
+	PATREON_CLIENT_SECRET,
+	PATREON_REDIRECT_URI,
+	PATREON_CAMPAIGN_ID,
+	FRONTEND_URL,
 } = process.env;
 
 export const config = {
@@ -17,4 +22,9 @@ export const config = {
 	host: MODE === 'dev' ? DEV_HOST : PROD_HOST,
 	db_uri: MODE === 'dev' ? DEV_DB_URI : PROD_DB_URI,
 	jwt_secret: JWT_SECRET,
+	patreon_client_id: PATREON_CLIENT_ID,
+	patreon_client_secret: PATREON_CLIENT_SECRET,
+	patreon_redirect_uri: PATREON_REDIRECT_URI,
+	patreon_campaign_id: PATREON_CAMPAIGN_ID,
+	frontend_url: FRONTEND_URL,
 };
