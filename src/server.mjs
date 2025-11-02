@@ -12,8 +12,28 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// CORS configuration - allow multiple origins
+const allowedOrigins = config.mode === 'dev' 
+	? '*' 
+	: [
+		config.frontend_url,
+		'https://admin.sketchshaper.com',
+		'https://sketchshaper.com',
+		'http://localhost:5173', // For local development
+		'http://localhost:3000'  // For local development
+	].filter(Boolean); // Remove undefined values
+
 app.use(cors({
-	origin: config.mode === 'dev' ? '*' : config.frontend_url,
+	origin: (origin, callback) => {
+		// Allow requests with no origin (like mobile apps or curl requests)
+		if (!origin) return callback(null, true);
+		
+		if (allowedOrigins === '*' || allowedOrigins.includes(origin)) {
+			callback(null, true);
+		} else {
+			callback(new Error('Not allowed by CORS'));
+		}
+	},
 	credentials: true,
 }));
 app.use(morgan('dev'));
