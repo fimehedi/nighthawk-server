@@ -36,7 +36,27 @@ class CategoryController {
   });
 
   getCategory = catchError(async (req, res, next) => {
-    const category = await categoryService.getCategory(req.params.id);
+    const { id } = req.params;
+    
+    // Validate ID
+    if (!id || id === 'undefined' || id === 'null') {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Category ID is required'
+      });
+    }
+    
+    const category = await categoryService.getCategory(id);
+    
+    if (!category) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'Category not found'
+      });
+    }
+    
     const resDoc = responseHandler(200, "Category retrieved successfully", category);
     res.status(200).json(resDoc);
   });

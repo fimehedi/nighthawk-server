@@ -7,15 +7,16 @@ class CommonController {
 
 		const searchTerm = req.query.search;
 
-		if (!searchTerm) {
-			const resDoc = responseHandler(400, 'Search Term is required');
+		// Validate search term
+		if (!searchTerm || searchTerm.trim() === '') {
+			const resDoc = responseHandler(400, 'Search term is required and cannot be empty');
 			return res.status(400).json(resDoc);
 		}
 
-		const search = await commonService.search(searchTerm);
+		const search = await commonService.search(searchTerm.trim());
 
-		const resDoc = responseHandler(201, 'Common created successfully', search);
-		res.status(201).json(resDoc);
+		const resDoc = responseHandler(200, 'Search completed successfully', search);
+		res.status(200).json(resDoc);
 	});
 
 
