@@ -199,3 +199,37 @@ model PatreonUser {
   created_at          DateTime  @default(now())
   updated_at          DateTime  @updatedAt
 }
+
+model SketchShaperProCategory {
+  id                Int                    @id @default(autoincrement())
+  name              String
+  preview_image     String
+  meta_title        String?
+  meta_description  String?                @db.LongText
+  files             SketchShaperProFile[]
+  created_at        DateTime               @default(now())
+  updated_at        DateTime               @updatedAt
+}
+
+model SketchShaperProFile {
+  id                           Int                     @id @default(autoincrement())
+  name                         String
+  preview_image                String
+  main_file                    String
+  file_type                    String // .skp, .zip, .png, .jpeg
+  size                         String // Size in MB
+  size_bytes                   BigInt // Size in bytes for accurate tracking
+  upload_status                String                  @default("pending") // pending, uploading, completed, failed
+  upload_progress              Float                   @default(0) // 0-100
+  uploaded_chunks              Int                     @default(0)
+  total_chunks                 Int                     @default(0)
+  chunk_size                   Int                     @default(5242880) // 5MB default chunk size
+  upload_session_id            String?                 @unique
+  sketchshaper_pro_category    SketchShaperProCategory @relation(fields: [sketchshaper_pro_category_id], references: [id], onDelete: Cascade)
+  sketchshaper_pro_category_id Int
+  created_at                   DateTime                @default(now())
+  updated_at                   DateTime                @updatedAt
+
+  @@index([upload_session_id])
+  @@index([upload_status])
+}

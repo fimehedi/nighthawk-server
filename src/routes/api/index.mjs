@@ -14,6 +14,8 @@ import blogsRouter from './blog.route.mjs';
 import galleyRouter from './gallery.route.mjs';
 import patreonRouter from './patreon.route.mjs';
 import protectedRouter from './protected.route.mjs';
+import sketchShaperProCategoryRouter from './sketchshaper.pro.category.route.mjs';
+import sketchShaperProFileRouter from './sketchshaper.pro.file.route.mjs';
 
 const indexRouter = Router();
 
@@ -41,9 +43,8 @@ indexRouter.use('/blogs', blogsRouter);
 indexRouter.use('/gallery', galleyRouter);
 indexRouter.use('/patreon', patreonRouter);
 indexRouter.use('/protected', protectedRouter);
-
-
-
+indexRouter.use('/sketchshaper-pro-categories', sketchShaperProCategoryRouter);
+indexRouter.use('/sketchshaper-pro-files', sketchShaperProFileRouter);
 
 
 
