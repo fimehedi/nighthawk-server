@@ -3,19 +3,19 @@ import upload from "../../middlewares/uploads/upload.mjs";
 
 import galleryController from "../../modules/gallery/gallery.controller.mjs";
 
-const galleyRouter = Router();
+const galleryRouter = Router();
 
-galleyRouter.get("/pages", galleryController.getGalleryByPagination);
+galleryRouter.get("/pages", galleryController.getGalleryByPagination);
 
-galleyRouter
+galleryRouter
   .route("/:id")
   .get(galleryController.getGallery)
   .put(upload.any(), galleryController.updateGallery)
   .delete(galleryController.deleteGallery);
 
-  galleyRouter
+  galleryRouter
   .route("/")
   .post(upload.any(), galleryController.createGallery)
   .get(galleryController.getGalleries);
 
-export default galleyRouter;
+export default galleryRouter;

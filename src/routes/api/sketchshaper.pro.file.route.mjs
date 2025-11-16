@@ -6,24 +6,24 @@ import downloadController from "../../modules/sketchshaper-pro-file/download.con
 
 const sketchShaperProFileRouter = Router();
 
-// Download endpoints
-sketchShaperProFileRouter.get("/download/:id", downloadController.downloadFile);
-sketchShaperProFileRouter.get("/download-info/:id", downloadController.getDownloadInfo);
-
-// Chunked upload endpoints
+// Chunked upload endpoints (specific routes first)
 sketchShaperProFileRouter.post("/initialize", sketchShaperProFileController.initializeUpload);
 sketchShaperProFileRouter.post("/upload-chunk", chunkUpload.single('chunk'), sketchShaperProFileController.uploadChunk);
 sketchShaperProFileRouter.post("/complete", sketchShaperProFileController.completeUpload);
+
+// Get files with pagination (must come before /:id route)
+sketchShaperProFileRouter.get("/pages", sketchShaperProFileController.getFilesByPagination);
+
+// Download endpoints
+sketchShaperProFileRouter.get("/download/:id", downloadController.downloadFile);
+sketchShaperProFileRouter.get("/download-info/:id", downloadController.getDownloadInfo);
 sketchShaperProFileRouter.get("/status/:uploadSessionId", sketchShaperProFileController.getUploadStatus);
 sketchShaperProFileRouter.delete("/cancel/:uploadSessionId", sketchShaperProFileController.cancelUpload);
-
-// Get files with pagination
-sketchShaperProFileRouter.get("/pages", sketchShaperProFileController.getFilesByPagination);
 
 // Update preview image
 sketchShaperProFileRouter.put("/:id/preview", upload.any(), sketchShaperProFileController.updatePreviewImage);
 
-// CRUD operations
+// CRUD operations (parameterized route last)
 sketchShaperProFileRouter
   .route("/:id")
   .get(sketchShaperProFileController.getFile)

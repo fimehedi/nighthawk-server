@@ -37,6 +37,15 @@ app.use(cors({
 	credentials: true,
 }));
 app.use(morgan('dev'));
+
+// Disable caching for API responses to prevent 304 Not Modified issues
+app.use('/api', (req, res, next) => {
+	res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+	res.set('Pragma', 'no-cache');
+	res.set('Expires', '0');
+	next();
+});
+
 // Routes
 app.use('/api', indexRouter);
 app.use('/api/uploads', express.static('uploads'));

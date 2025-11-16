@@ -4,19 +4,19 @@ import sketchShaperProCategoryController from "../../modules/sketchshaper-pro-ca
 
 const sketchShaperProCategoryRouter = Router();
 
-// Get categories with pagination
+// CRUD operations
+sketchShaperProCategoryRouter
+  .route("/")
+  .post(upload.any(), sketchShaperProCategoryController.createCategory)
+  .get(sketchShaperProCategoryController.getCategories);
+
+// Get categories with pagination (must come before /:id route)
 sketchShaperProCategoryRouter.get("/pages", sketchShaperProCategoryController.getCategoriesByPagination);
 
-// CRUD operations
 sketchShaperProCategoryRouter
   .route("/:id")
   .get(sketchShaperProCategoryController.getCategory)
   .put(upload.any(), sketchShaperProCategoryController.updateCategory)
   .delete(sketchShaperProCategoryController.deleteCategory);
-
-sketchShaperProCategoryRouter
-  .route("/")
-  .post(upload.any(), sketchShaperProCategoryController.createCategory)
-  .get(sketchShaperProCategoryController.getCategories);
 
 export default sketchShaperProCategoryRouter;
