@@ -142,7 +142,9 @@ class PatreonService {
 
 		// In development, allow non-patrons for testing
 		const isDev = config.mode === 'dev';
-		if (!patronData.isActivePatron && !isDev) {
+		const allowNonPatrons = process.env.ALLOW_NON_PATRONS === 'true';
+		
+		if (!patronData.isActivePatron && !isDev && !allowNonPatrons) {
 			throw new Error(
 				'You must be an active patron to access this service. Please subscribe on Patreon first.'
 			);
@@ -153,7 +155,10 @@ class PatreonService {
 			isActivePatron: patronData.isActivePatron,
 			membershipTier: patronData.membershipTier,
 			pledgeAmount: patronData.pledgeAmountCents / 100,
-			devMode: isDev
+			devMode: isDev,
+			allowNonPatrons: allowNonPatrons,
+			patreonId: patronData.patreonId,
+			email: patronData.email
 		});
 
 		// Calculate token expiry
