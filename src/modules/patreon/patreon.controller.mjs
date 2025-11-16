@@ -25,7 +25,8 @@ class PatreonController {
 			throw new Error('Authorization code is required');
 		}
 
-		const frontendUrl = process.env.FRONTEND_URL;
+		const { config } = await import('../../config/config.mjs');
+		const frontendUrl = config.frontend_url;
 
 		try {
 			const result = await patreonService.handleOAuthCallback(code);
