@@ -8,7 +8,9 @@ class SketchShaperProFileController {
    * POST /api/sketchshaper-pro-files/initialize
    */
   initializeUpload = catchError(async (req, res, next) => {
+    console.log('Initialize request body:', req.body);
     const result = await sketchShaperProFileService.initializeUpload(req.body);
+    console.log('Initialize result:', result);
     const resDoc = responseHandler(201, result.message, {
       uploadSessionId: result.uploadSessionId,
       fileId: result.fileId
