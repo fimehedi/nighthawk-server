@@ -56,7 +56,15 @@ class SketchShaperProCategoryService {
         id: 'desc',
       }
     });
-    return categories;
+    
+    // Convert BigInt to string for JSON serialization
+    return categories.map(cat => ({
+      ...cat,
+      files: cat.files.map(file => ({
+        ...file,
+        size_bytes: file.size_bytes.toString()
+      }))
+    }));
   }
 
   async getCategoriesByPagination({ page = 1, limit = 10, order = 'desc' }) {
@@ -87,11 +95,20 @@ class SketchShaperProCategoryService {
       countPromise,
     ]);
 
+    // Convert BigInt to string for JSON serialization
+    const categoriesData = categories.map(cat => ({
+      ...cat,
+      files: cat.files.map(file => ({
+        ...file,
+        size_bytes: file.size_bytes.toString()
+      }))
+    }));
+
     const totalPage = Math.ceil(total / limit);
     const currentPage = page;
 
     return {
-      result: categories,
+      result: categoriesData,
       pagination: {
         total,
         totalPage,
@@ -117,7 +134,16 @@ class SketchShaperProCategoryService {
       },
     });
     
-    return category;
+    if (!category) return null;
+    
+    // Convert BigInt to string for JSON serialization
+    return {
+      ...category,
+      files: category.files.map(file => ({
+        ...file,
+        size_bytes: file.size_bytes.toString()
+      }))
+    };
   }
 
   async deleteCategory(id) {

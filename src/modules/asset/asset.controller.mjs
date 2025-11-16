@@ -13,6 +13,17 @@ class AssetController {
 	});
 
 	updateAsset = catchError(async (req, res, next) => {
+		const { id } = req.params;
+		
+		// Validate that ID is numeric
+		if (!/^\d+$/.test(id)) {
+			return res.status(404).json({
+				statusCode: 404,
+				status: 'error',
+				message: 'Asset not found',
+			});
+		}
+		
 		const {
 			name,
 			resolution,
@@ -25,7 +36,7 @@ class AssetController {
           
 		} = req.body;
 
-		const asset = await assetService.updateAsset(req.params.id, {
+		const asset = await assetService.updateAsset(id, {
 			name,
 			resolution,
 			size,
@@ -67,13 +78,44 @@ class AssetController {
 	});
 
 	getAsset = catchError(async (req, res, next) => {
-		const asset = await assetService.getAsset(req.params.id);
+		const { id } = req.params;
+		
+		// Validate that ID is numeric
+		if (!/^\d+$/.test(id)) {
+			return res.status(404).json({
+				statusCode: 404,
+				status: 'error',
+				message: 'Asset not found',
+			});
+		}
+		
+		const asset = await assetService.getAsset(id);
+		
+		if (!asset) {
+			return res.status(404).json({
+				statusCode: 404,
+				status: 'error',
+				message: 'Asset not found',
+			});
+		}
+		
 		const resDoc = responseHandler(200, 'Asset retrieved successfully', asset);
 		res.status(200).json(resDoc);
 	});
 
 	deleteAsset = catchError(async (req, res, next) => {
-		await assetService.deleteAsset(req.params.id);
+		const { id } = req.params;
+		
+		// Validate that ID is numeric
+		if (!/^\d+$/.test(id)) {
+			return res.status(404).json({
+				statusCode: 404,
+				status: 'error',
+				message: 'Asset not found',
+			});
+		}
+		
+		await assetService.deleteAsset(id);
 		const resDoc = responseHandler(200, 'Asset deleted successfully');
 		res.status(200).json(resDoc);
 	});

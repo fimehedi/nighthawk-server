@@ -1,4 +1,5 @@
 const globalErrorHandler = (err, req, res, next) => {
+  console.error('Error:', err);
 
   let code = err.code || 500;
   let message = err.message || 'Internal Server Error';

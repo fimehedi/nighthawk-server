@@ -5,15 +5,10 @@ import path from 'path';
 const storage = multer.memoryStorage();
 
 // File filter to validate file types
+// Note: File type validation happens at initialization stage
 const fileFilter = (req, file, cb) => {
-  const allowedExtensions = ['.skp', '.zip', '.png', '.jpeg', '.jpg'];
-  const ext = path.extname(file.originalname).toLowerCase();
-  
-  if (allowedExtensions.includes(ext)) {
-    cb(null, true);
-  } else {
-    cb(new Error(`Invalid file type. Allowed types: ${allowedExtensions.join(', ')}`), false);
-  }
+  // Accept all file types for chunks - validation already done at initialization
+  cb(null, true);
 };
 
 // Configure multer for chunk uploads
@@ -21,7 +16,7 @@ const chunkUpload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB per chunk (adjust as needed)
+    fileSize: 100 * 1024 * 1024, // 100MB per chunk
   }
 });
 

@@ -135,9 +135,15 @@ class SketchShaperProFileService {
       }
     });
 
+    // Convert BigInt to string for JSON serialization
+    const fileData = {
+      ...updatedFile,
+      size_bytes: updatedFile.size_bytes.toString()
+    };
+
     return {
       message: 'File upload completed successfully',
-      file: updatedFile
+      file: fileData
     };
   }
 
@@ -188,7 +194,8 @@ class SketchShaperProFileService {
       uploadedChunks: file.uploaded_chunks,
       totalChunks: file.total_chunks,
       uploadedChunksList,
-      category: file.sketchshaper_pro_category
+      category: file.sketchshaper_pro_category,
+      size_bytes: file.size_bytes.toString()
     };
   }
 
@@ -224,11 +231,17 @@ class SketchShaperProFileService {
       countPromise,
     ]);
 
+    // Convert BigInt to string for JSON serialization
+    const filesData = files.map(file => ({
+      ...file,
+      size_bytes: file.size_bytes.toString()
+    }));
+
     const totalPage = Math.ceil(total / limit);
     const currentPage = page;
 
     return {
-      result: files,
+      result: filesData,
       pagination: {
         total,
         totalPage,
@@ -248,7 +261,13 @@ class SketchShaperProFileService {
       }
     });
 
-    return file;
+    if (!file) return null;
+
+    // Convert BigInt to string for JSON serialization
+    return {
+      ...file,
+      size_bytes: file.size_bytes.toString()
+    };
   }
 
   /**
@@ -275,7 +294,11 @@ class SketchShaperProFileService {
       }
     });
 
-    return file;
+    // Convert BigInt to string for JSON serialization
+    return {
+      ...file,
+      size_bytes: file.size_bytes.toString()
+    };
   }
 
   /**
