@@ -3,6 +3,7 @@ import upload from "../../middlewares/uploads/upload.mjs";
 import chunkUpload from "../../middlewares/uploads/chunkUpload.mjs";
 import sketchShaperProFileController from "../../modules/sketchshaper-pro-file/sketchshaper.pro.file.controller.mjs";
 import downloadController from "../../modules/sketchshaper-pro-file/download.controller.mjs";
+import { verifyPatreonAuth } from "../../middlewares/auth/verifyPatreonAuth.mjs";
 
 const sketchShaperProFileRouter = Router();
 
@@ -14,9 +15,9 @@ sketchShaperProFileRouter.post("/complete", sketchShaperProFileController.comple
 // Get files with pagination (must come before /:id route)
 sketchShaperProFileRouter.get("/pages", sketchShaperProFileController.getFilesByPagination);
 
-// Download endpoints
-sketchShaperProFileRouter.get("/download/:id", downloadController.downloadFile);
-sketchShaperProFileRouter.get("/download-info/:id", downloadController.getDownloadInfo);
+// Download endpoints (protected - requires Patreon authentication)
+sketchShaperProFileRouter.get("/download/:id", verifyPatreonAuth, downloadController.downloadFile);
+sketchShaperProFileRouter.get("/download-info/:id", verifyPatreonAuth, downloadController.getDownloadInfo);
 sketchShaperProFileRouter.get("/status/:uploadSessionId", sketchShaperProFileController.getUploadStatus);
 sketchShaperProFileRouter.delete("/cancel/:uploadSessionId", sketchShaperProFileController.cancelUpload);
 
