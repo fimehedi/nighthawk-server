@@ -19,6 +19,7 @@ const allowedOrigins = config.mode === 'dev'
 		config.frontend_url,
 		'https://admin.sketchshaper.com',
 		'https://sketchshaper.com',
+		'https://www.sketchshaper.com',
 		'http://localhost:5173', // For local development
 		'http://localhost:3000'  // For local development
 	].filter(Boolean); // Remove undefined values
