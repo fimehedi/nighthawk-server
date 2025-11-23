@@ -60,6 +60,7 @@ model Asset {
   sub_category      SubCategory  @relation(fields: [sub_category_id], references: [id], onDelete: Cascade)
   sub_category_id   Int
   images            AssetImage[]
+  file              AssetFile?
   meta_title        String?
   meta_description  String?      @db.LongText
   created_at        DateTime     @default(now())
@@ -74,6 +75,28 @@ model AssetImage {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
+
+model AssetFile {
+  id                   Int      @id @default(autoincrement())
+  asset_id             Int      @unique
+  asset                Asset    @relation(fields: [asset_id], references: [id], onDelete: Cascade)
+  main_file            String   @default("")
+  file_type            String   @default("")
+  file_size            BigInt   @default(0)
+  upload_status        String   @default("pending")
+  upload_progress      Float    @default(0)
+  uploaded_chunks      Int      @default(0)
+  total_chunks         Int      @default(0)
+  chunk_size           Int      @default(5242880)
+  upload_session_id    String?  @unique
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@index([upload_session_id])
+  @@index([upload_status])
+}
+
+// Upload status enum values: 'pending', 'uploading', 'completed', 'failed'
 
 model AboutUs {
   id                Int      @id @default(autoincrement())
@@ -232,4 +255,14 @@ model SketchShaperProFile {
 
   @@index([upload_session_id])
   @@index([upload_status])
+}
+
+model ExtensionDownload {
+  id         Int      @id @default(autoincrement())
+  name       String   // Extension name (e.g., "MyExtension", "SketchPlugin")
+  count      Int      @default(0) // Total download count
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([name])
 }

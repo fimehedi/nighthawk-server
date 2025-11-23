@@ -16,6 +16,7 @@ import patreonRouter from './patreon.route.mjs';
 import protectedRouter from './protected.route.mjs';
 import sketchShaperProCategoryRouter from './sketchshaper.pro.category.route.mjs';
 import sketchShaperProFileRouter from './sketchshaper.pro.file.route.mjs';
+import extensionDownloadRouter from './extension-download.route.mjs';
 
 const indexRouter = Router();
 
@@ -45,6 +46,7 @@ indexRouter.use('/patreon', patreonRouter);
 indexRouter.use('/protected', protectedRouter);
 indexRouter.use('/sketchshaper-pro-categories', sketchShaperProCategoryRouter);
 indexRouter.use('/sketchshaper-pro-files', sketchShaperProFileRouter);
+indexRouter.use('/extension-downloads', extensionDownloadRouter);
 
 
 
