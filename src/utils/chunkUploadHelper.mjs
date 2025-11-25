@@ -113,9 +113,15 @@ class ChunkUploadHelper {
             throw new Error(`Missing chunk ${i}`);
           }
 
-          // Read and write chunk
+          // Read chunk data
           const chunkData = fs.readFileSync(chunkPath);
-          writeStream.write(chunkData);
+          
+          // Write chunk and handle backpressure
+          const canContinue = writeStream.write(chunkData);
+          if (!canContinue) {
+            // Wait for drain event before continuing to prevent data loss
+            await new Promise(resolveDrain => writeStream.once('drain', resolveDrain));
+          }
         }
 
         writeStream.end();
