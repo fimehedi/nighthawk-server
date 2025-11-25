@@ -48,6 +48,13 @@ class DownloadController {
     const stat = fs.statSync(filePath);
     const fileSize = stat.size;
 
+    // Extract the actual filename from the stored path
+    // main_file format: "sketchshaper-pro/1234567890-originalfilename.ext"
+    const mainFile = file.main_file;
+    const actualFilename = mainFile.includes('/') 
+      ? mainFile.split('/').pop() 
+      : mainFile;
+
     // Parse range header for resume support
     const range = req.headers.range;
 
@@ -67,8 +74,9 @@ class DownloadController {
         'Accept-Ranges': 'bytes',
         'Content-Length': chunksize,
         'Content-Type': this.getContentType(file.file_type),
-        'Content-Disposition': `attachment; filename="${file.name}${file.file_type}"`
+        'Content-Disposition': `attachment; filename="${actualFilename}"`
       });
+      res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition, Content-Length, Content-Type, Content-Range');
 
       // Pipe the file stream to response
       fileStream.pipe(res);
@@ -77,9 +85,10 @@ class DownloadController {
       res.writeHead(200, {
         'Content-Length': fileSize,
         'Content-Type': this.getContentType(file.file_type),
-        'Content-Disposition': `attachment; filename="${file.name}${file.file_type}"`,
+        'Content-Disposition': `attachment; filename="${actualFilename}"`,
         'Accept-Ranges': 'bytes'
       });
+      res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition, Content-Length, Content-Type');
 
       // Create read stream
       const fileStream = fs.createReadStream(filePath);

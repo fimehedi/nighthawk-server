@@ -1,6 +1,8 @@
 import { prisma } from '../../db/prisma.mjs';
 import chunkUploadHelper from '../../utils/chunkUploadHelper.mjs';
 import isArrayElementExist from '../../utils/isArrayElementExist.mjs';
+import fs from 'fs';
+import path from 'path';
 
 class SketchShaperProFileService {
   /**
@@ -122,11 +124,12 @@ class SketchShaperProFileService {
       originalFilename
     );
 
-    // Update file record with final file path
+    // Update file record with final file path and actual file size
     const updatedFile = await prisma.sketchShaperProFile.update({
       where: { id: file.id },
       data: {
         main_file: mergedFile.relativePath,
+        size_bytes: BigInt(mergedFile.size),
         upload_status: 'completed',
         upload_progress: 100
       },
@@ -305,17 +308,50 @@ class SketchShaperProFileService {
    * Delete file
    */
   async deleteFile(id) {
+    const fileId = parseInt(id);
     const file = await prisma.sketchShaperProFile.findUnique({
-      where: { id: parseInt(id) }
+      where: { id: fileId }
     });
 
-    if (file && file.upload_session_id) {
-      // Clean up any remaining chunks
+    if (!file) {
+      throw new Error('File not found');
+    }
+
+    // Clean up any remaining chunks from temp directory
+    if (file.upload_session_id) {
       await chunkUploadHelper.cleanupSession(file.upload_session_id);
     }
 
+    // Delete the actual file from disk if it exists
+    if (file.main_file) {
+      const filePath = path.join(process.cwd(), 'uploads', file.main_file);
+      try {
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+          console.log('Deleted file from disk:', filePath);
+        }
+      } catch (error) {
+        console.error('Error deleting file from disk:', error);
+        // Continue with database deletion even if file deletion fails
+      }
+    }
+
+    // Delete preview image if it exists
+    if (file.preview_image) {
+      const previewPath = path.join(process.cwd(), 'uploads', file.preview_image);
+      try {
+        if (fs.existsSync(previewPath)) {
+          fs.unlinkSync(previewPath);
+          console.log('Deleted preview image from disk:', previewPath);
+        }
+      } catch (error) {
+        console.error('Error deleting preview image from disk:', error);
+      }
+    }
+
+    // Delete from database
     await prisma.sketchShaperProFile.delete({
-      where: { id: parseInt(id) }
+      where: { id: fileId }
     });
   }
 

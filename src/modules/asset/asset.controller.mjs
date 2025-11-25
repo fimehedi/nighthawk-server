@@ -1,6 +1,8 @@
 import catchError from '../../middlewares/errors/catchError.mjs';
 import responseHandler from '../../utils/responseHandler.mjs';
 import assetService from './asset.service.mjs';
+import fs from 'fs';
+import path from 'path';
 
 class AssetController {
 	/**
@@ -241,8 +243,41 @@ class AssetController {
 			});
 		}
 
-		const filePath = await assetService.downloadAsset(id);
-		res.download(filePath);
+		const fileInfo = await assetService.downloadAsset(id);
+		
+		// Construct full file path
+		const fullPath = path.join(process.cwd(), 'uploads', fileInfo.filePath);
+		
+		// Check if file exists
+		if (!fs.existsSync(fullPath)) {
+			return res.status(404).json({
+				statusCode: 404,
+				status: 'error',
+				message: 'File not found on server',
+			});
+		}
+		
+		// Get file stats
+		const stat = fs.statSync(fullPath);
+		const fileSize = stat.size;
+		
+		// Log headers being set
+		console.log('Setting download headers:', {
+			fileName: fileInfo.fileName,
+			fileSize: fileSize,
+			contentDisposition: `attachment; filename="${fileInfo.fileName}"`
+		});
+		
+		// Set proper headers with original filename
+		res.setHeader('Content-Length', fileSize);
+		res.setHeader('Content-Type', 'application/octet-stream');
+		res.setHeader('Content-Disposition', `attachment; filename="${fileInfo.fileName}"`);
+		res.setHeader('Accept-Ranges', 'bytes');
+		res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition, Content-Length, Content-Type');
+		
+		// Create read stream and pipe to response
+		const fileStream = fs.createReadStream(fullPath);
+		fileStream.pipe(res);
 	});
 }
 

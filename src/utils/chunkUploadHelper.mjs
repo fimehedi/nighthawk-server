@@ -120,12 +120,16 @@ class ChunkUploadHelper {
 
         writeStream.end();
         writeStream.on('finish', async () => {
+          // Get the actual file size
+          const fileStats = await stat(finalPath);
+          
           // Clean up temporary chunks
           await this.cleanupSession(sessionId);
           resolve({
             filename: finalFilename,
             path: finalPath,
-            relativePath: `sketchshaper-pro/${finalFilename}`
+            relativePath: `sketchshaper-pro/${finalFilename}`,
+            size: fileStats.size
           });
         });
 

@@ -1,6 +1,8 @@
 import { prisma } from '../../db/prisma.mjs';
 import isArrayElementExist from '../../utils/isArrayElementExist.mjs';
 import chunkUploadHelper from '../../utils/chunkUploadHelper.mjs';
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Convert BigInt values to strings for JSON serialization
@@ -464,10 +466,48 @@ class AssetService {
 	}
 
 	async deleteAsset(id) {
+		const assetId = parseInt(id);
+		
+		// Get asset with file info
+		const asset = await prisma.asset.findUnique({
+			where: { id: assetId },
+			include: { file: true }
+		});
+
+		if (!asset) {
+			throw new Error('Asset not found');
+		}
+
+		// Delete the actual file from disk if it exists
+		if (asset.file && asset.file.main_file) {
+			const filePath = path.join(process.cwd(), 'uploads', asset.file.main_file);
+			try {
+				if (fs.existsSync(filePath)) {
+					fs.unlinkSync(filePath);
+					console.log('Deleted file from disk:', filePath);
+				}
+			} catch (error) {
+				console.error('Error deleting file from disk:', error);
+				// Continue with database deletion even if file deletion fails
+			}
+		}
+
+		// Delete cover image if it exists
+		if (asset.cover) {
+			const coverPath = path.join(process.cwd(), 'uploads', asset.cover);
+			try {
+				if (fs.existsSync(coverPath)) {
+					fs.unlinkSync(coverPath);
+					console.log('Deleted cover image from disk:', coverPath);
+				}
+			} catch (error) {
+				console.error('Error deleting cover image from disk:', error);
+			}
+		}
+
+		// Delete from database (this will cascade delete related AssetFile and AssetImage records)
 		await prisma.asset.delete({
-			where: {
-				id: parseInt(id),
-			},
+			where: { id: assetId }
 		});
 	}
 
@@ -488,10 +528,30 @@ class AssetService {
 			throw new Error('No file available for download');
 		}
 
-		// Construct full file path
-		const filePath = `uploads/${asset.file.main_file}`;
-		
-		return filePath;
+		// Log what we're getting from database
+		console.log('Asset file data:', {
+			id: asset.id,
+			name: asset.name,
+			main_file: asset.file.main_file,
+			file_type: asset.file.file_type,
+			file_size: asset.file.file_size
+		});
+
+		// Extract the actual filename from the stored path
+		// main_file format: "sketchshaper-pro/1234567890-originalfilename.ext"
+		const mainFile = asset.file.main_file;
+		const actualFilename = mainFile.includes('/') 
+			? mainFile.split('/').pop() 
+			: mainFile;
+
+		console.log('Extracted filename:', actualFilename);
+
+		// Return file info for download
+		return {
+			filePath: asset.file.main_file,
+			fileName: actualFilename,
+			fileType: ''
+		};
 	}
 }
 
