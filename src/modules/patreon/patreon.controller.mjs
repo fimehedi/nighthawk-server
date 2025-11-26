@@ -31,9 +31,16 @@ class PatreonController {
 		try {
 			const result = await patreonService.handleOAuthCallback(code);
 			
+			console.log('✅ Patreon auth successful:', {
+				email: result.user.email,
+				isActivePatron: result.user.isActivePatron,
+				membershipTier: result.user.membershipTier
+			});
+
 			// If frontend URL is configured, redirect with token
 			if (frontendUrl) {
 				const redirectUrl = `${frontendUrl}/auth/patreon/callback?token=${result.token}&success=true`;
+				console.log('Redirecting to:', redirectUrl);
 				return res.redirect(redirectUrl);
 			}
 
@@ -45,16 +52,24 @@ class PatreonController {
 			);
 			res.status(200).json(resDoc);
 		} catch (error) {
+			console.error('❌ Patreon auth error:', error.message);
+			
 			// Handle patron verification errors gracefully
 			if (error.message.includes('active patron')) {
+				console.log('🚫 User is not an active patron, showing error page');
 				if (frontendUrl) {
-					const redirectUrl = `${frontendUrl}/auth/patreon/callback?error=not_patron&message=${encodeURIComponent(error.message)}`;
+					const { config } = await import('../../config/config.mjs');
+					const campaignId = config.patreon_campaign_id;
+					const patreonCampaignUrl = `https://www.patreon.com/sketchshaper`;
+					const redirectUrl = `${frontendUrl}/auth/patreon/callback?error=not_patron&message=${encodeURIComponent(error.message)}&campaignUrl=${encodeURIComponent(patreonCampaignUrl)}`;
+					console.log('Redirecting to error page:', redirectUrl);
 					return res.redirect(redirectUrl);
 				}
 				return res.status(403).json({
 					status: 'error',
 					code: 403,
 					message: error.message,
+					campaignUrl: 'https://www.patreon.com/sketchshaper',
 				});
 			}
 

@@ -7,18 +7,27 @@ import { prisma } from '../../db/prisma.mjs';
  */
 export const verifyPatreonAuth = async (req, res, next) => {
 	try {
-		// Get token from header
+		// Get token from header OR query parameter (for direct download links)
 		const authHeader = req.headers.authorization;
+		let token = null;
 
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		// First, try to get token from Authorization header
+		if (authHeader && authHeader.startsWith('Bearer ')) {
+			token = authHeader.split(' ')[1];
+		}
+		// If not in header, check query parameter
+		else if (req.query.token) {
+			token = req.query.token;
+		}
+
+		// If no token found in either location
+		if (!token) {
 			return res.status(401).json({
 				status: 'error',
 				code: 401,
 				message: 'No token provided. Please login with Patreon.',
 			});
 		}
-
-		const token = authHeader.split(' ')[1];
 
 		// Verify JWT
 		const decoded = jwt.verify(token, config.jwt_secret);

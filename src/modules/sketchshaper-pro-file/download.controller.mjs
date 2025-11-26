@@ -51,8 +51,8 @@ class DownloadController {
     // Extract the actual filename from the stored path
     // main_file format: "sketchshaper-pro/1234567890-originalfilename.ext"
     const mainFile = file.main_file;
-    const actualFilename = mainFile.includes('/') 
-      ? mainFile.split('/').pop() 
+    const actualFilename = mainFile.includes('/')
+      ? mainFile.split('/').pop()
       : mainFile;
 
     // Parse range header for resume support
@@ -68,6 +68,9 @@ class DownloadController {
       // Create read stream with range
       const fileStream = fs.createReadStream(filePath, { start, end });
 
+      // Set CORS headers BEFORE writeHead
+      res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition, Content-Length, Content-Type, Content-Range');
+
       // Set headers for partial content
       res.writeHead(206, {
         'Content-Range': `bytes ${start}-${end}/${fileSize}`,
@@ -76,23 +79,24 @@ class DownloadController {
         'Content-Type': this.getContentType(file.file_type),
         'Content-Disposition': `attachment; filename="${actualFilename}"`
       });
-      res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition, Content-Length, Content-Type, Content-Range');
 
       // Pipe the file stream to response
       fileStream.pipe(res);
     } else {
       // Handle full file download
+      // Set CORS headers BEFORE writeHead
+      res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition, Content-Length, Content-Type');
+
       res.writeHead(200, {
         'Content-Length': fileSize,
         'Content-Type': this.getContentType(file.file_type),
         'Content-Disposition': `attachment; filename="${actualFilename}"`,
         'Accept-Ranges': 'bytes'
       });
-      res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition, Content-Length, Content-Type');
 
       // Create read stream
       const fileStream = fs.createReadStream(filePath);
-      
+
       // Pipe the file stream to response
       fileStream.pipe(res);
     }

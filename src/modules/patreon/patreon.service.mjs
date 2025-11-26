@@ -51,9 +51,17 @@ class PatreonService {
 			);
 			return response.data;
 		} catch (error) {
-			console.error('Error exchanging code for token:', error.response?.data?.error_description || error.message);
-			console.error('Full error:', JSON.stringify(error.response?.data, null, 2));
-			throw new Error('Failed to exchange authorization code');
+			console.error('Error exchanging code for token:');
+			console.error('Status:', error.response?.status);
+			console.error('Status Text:', error.response?.statusText);
+			console.error('Response Data:', JSON.stringify(error.response?.data, null, 2));
+			console.error('Error Message:', error.message);
+			console.error('Request Config:', {
+				url: error.config?.url,
+				method: error.config?.method,
+				data: error.config?.data
+			});
+			throw new Error(`Failed to exchange authorization code: ${error.response?.data?.error || error.message}`);
 		}
 	}
 
@@ -75,7 +83,12 @@ class PatreonService {
 
 			return response.data;
 		} catch (error) {
-			console.error('Error fetching Patreon identity:', error.response?.data);
+			console.error('❌ Error fetching Patreon identity:');
+			console.error('Status:', error.response?.status);
+			console.error('Status Text:', error.response?.statusText);
+			console.error('Response Data:', JSON.stringify(error.response?.data, null, 2));
+			console.error('Error Message:', error.message);
+			console.error('Access Token:', accessToken?.substring(0, 20) + '...');
 			throw new Error('Failed to fetch Patreon user data');
 		}
 	}
@@ -140,22 +153,21 @@ class PatreonService {
 		// Get user data and verify patron status
 		const patronData = await this.verifyPatronStatus(access_token);
 
-		// In development, allow non-patrons for testing
-		const isDev = config.mode === 'dev';
+		// Check if user is an active patron
 		const allowNonPatrons = process.env.ALLOW_NON_PATRONS === 'true';
-		
-		if (!patronData.isActivePatron && !isDev && !allowNonPatrons) {
+
+		// Only throw error if not a patron AND not allowed
+		if (!patronData.isActivePatron && !allowNonPatrons) {
 			throw new Error(
 				'You must be an active patron to access this service. Please subscribe on Patreon first.'
 			);
 		}
-		
+
 		// Log patron status for debugging
 		console.log('Patron verification:', {
 			isActivePatron: patronData.isActivePatron,
 			membershipTier: patronData.membershipTier,
 			pledgeAmount: patronData.pledgeAmountCents / 100,
-			devMode: isDev,
 			allowNonPatrons: allowNonPatrons,
 			patreonId: patronData.patreonId,
 			email: patronData.email

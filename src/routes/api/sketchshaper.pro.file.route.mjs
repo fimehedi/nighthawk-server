@@ -15,7 +15,7 @@ sketchShaperProFileRouter.post("/complete", sketchShaperProFileController.comple
 // Get files with pagination (must come before /:id route)
 sketchShaperProFileRouter.get("/pages", sketchShaperProFileController.getFilesByPagination);
 
-// Download endpoints (protected - requires Patreon authentication)
+// Download endpoints (protected with Patreon authentication)
 sketchShaperProFileRouter.get("/download/:id", verifyPatreonAuth, downloadController.downloadFile);
 sketchShaperProFileRouter.get("/download-info/:id", verifyPatreonAuth, downloadController.getDownloadInfo);
 sketchShaperProFileRouter.get("/status/:uploadSessionId", sketchShaperProFileController.getUploadStatus);
