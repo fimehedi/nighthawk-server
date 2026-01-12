@@ -7,14 +7,19 @@ import { config } from './config/config.mjs';
 import globalErrorHandler from './middlewares/errors/globalErrorHandler.mjs';
 import indexRouter from './routes/api/index.mjs';
 
+// Fix for BigInt serialization
+BigInt.prototype.toJSON = function () {
+	return this.toString();
+};
+
 const app = express();
 
 // Middleware
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // CORS configuration - allow multiple origins
-const allowedOrigins = config.mode === 'dev' 
-	? '*' 
+const allowedOrigins = config.mode === 'dev'
+	? '*'
 	: [
 		config.frontend_url,
 		'https://admin.sketchshaper.com',
@@ -28,7 +33,7 @@ app.use(cors({
 	origin: (origin, callback) => {
 		// Allow requests with no origin (like mobile apps or curl requests)
 		if (!origin) return callback(null, true);
-		
+
 		if (allowedOrigins === '*') {
 			callback(null, true);
 		} else if (allowedOrigins.includes(origin)) {
